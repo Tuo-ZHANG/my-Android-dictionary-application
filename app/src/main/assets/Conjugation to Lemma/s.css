@@ -1,0 +1,16 @@
+a {
+	color:navy; 
+	font-size:110%; 
+	font-family:Georgia; 
+	background-color:#f8f8c1; 
+	border:2px groove orange; 
+	padding:0.2em 0 0.3em 0.5em; 
+	border-radius:5px; 
+	box-shadow:5px 5px 2.5px #888888; 
+	width:95%;
+    display: block;
+}
+
+a:before {
+	content: "Jump To: ";
+}
