@@ -14,6 +14,8 @@ import android.widget.SearchView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ENTRY = "entry";
     public static final String DICTIONARY = "dictionary";
     private EntriesRecViewAdapter adapter;
+    private HashMap<String, String> types = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
         entries = new ArrayList<>();
         AssetManager assetManager = getAssets();
         try {
-            String[] dictionaries = assetManager.list("");
-            String[] files = assetManager.list(dictionaries[1]);
-            for (String s : files) {
-                entries.add(new Entry(s.substring(0, s.length() - 5), dictionaries[1]));
+            String[] dictionaries = Arrays.copyOfRange(assetManager.list(""), 0, assetManager.list("").length - 2);
+            for (String dictionary : dictionaries) {
+                String[] files = assetManager.list(dictionary);
+                for (String s : files) {
+                    entries.add(new Entry(s.substring(0, s.length() - 5), dictionary));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
