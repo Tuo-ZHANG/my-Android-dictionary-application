@@ -11,12 +11,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 
 import static com.example.myapplication.MainActivity.DICTIONARY;
 import static com.example.myapplication.MainActivity.ENTRY;
 
-public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAdapter.ViewHolder> implements Filterable{
+public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAdapter.ViewHolder> implements Filterable {
 
     private ArrayList<Entry> entries = new ArrayList<>();
     private ArrayList<Entry> entriesFull;
@@ -26,7 +27,7 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
         this.mContext = mContext;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txtEntry;
 
@@ -39,7 +40,7 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.entries_card_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.entry_card_view, parent, false);
         return new ViewHolder(view);
     }
 
@@ -51,7 +52,11 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
             @Override
             public void onClick(View v) {
 //                Toast.makeText(mContext, entries.get(position).getEntry() + " selected", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(mContext, WebsiteActivity.class);
+//                Intent intent = new Intent(mContext, WebsiteActivity.class);
+//                intent.putExtra(ENTRY, entries.get(position).getEntry());
+//                intent.putExtra(DICTIONARY, entries.get(position).getDictionary());
+//                mContext.startActivity(intent);
+                Intent intent = new Intent(mContext, HtmlsRecViewActivity.class);
                 intent.putExtra(ENTRY, entries.get(position).getEntry());
                 intent.putExtra(DICTIONARY, entries.get(position).getDictionary());
                 mContext.startActivity(intent);
@@ -78,8 +83,8 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
     private Filter entriesFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            ArrayList<Entry> filteredEntries= new ArrayList<>();
-            if (constraint == null || constraint.length() == 0 ) {
+            ArrayList<Entry> filteredEntries = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
                 filteredEntries.addAll(entriesFull);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
