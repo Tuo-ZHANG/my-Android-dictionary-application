@@ -1,0 +1,3 @@
+include ':JavaLibrary'
+include ':app'
+rootProject.name = "My Application"
