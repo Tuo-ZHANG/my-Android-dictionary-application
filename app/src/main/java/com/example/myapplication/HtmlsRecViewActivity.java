@@ -18,21 +18,21 @@ public class HtmlsRecViewActivity extends AppCompatActivity {
     private HtmlsRecViewAdapter adapter;
     private ArrayList<Entry> items;
 
-    //    private Entry item;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_htmls_rec_view);
         htmlsRecView = findViewById(R.id.htmlsRecView);
         adapter = new HtmlsRecViewAdapter(this);
-//
+
         Intent intent = getIntent();
-//        item.setDictionary(intent.getStringExtra(DICTIONARY));
-//        item.setEntry(intent.getStringExtra(ENTRY));
 
         items = new ArrayList<>();
+        String[] arr = intent.getStringExtra(DICTIONARY).split(",");
+        for (String s : arr) {
+            items.add(new Entry(intent.getStringExtra(ENTRY), s));
+        }
 
-        items.add(new Entry(intent.getStringExtra(ENTRY), intent.getStringExtra(DICTIONARY)));
         adapter.setItems(items);
         htmlsRecView.setAdapter(adapter);
         htmlsRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
