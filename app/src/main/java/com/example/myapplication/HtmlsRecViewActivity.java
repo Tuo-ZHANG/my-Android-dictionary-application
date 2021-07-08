@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.example.myapplication.MainActivity.DICTIONARY;
 import static com.example.myapplication.MainActivity.ENTRY;
@@ -29,6 +30,9 @@ public class HtmlsRecViewActivity extends AppCompatActivity {
 
         items = new ArrayList<>();
         String[] arr = intent.getStringExtra(DICTIONARY).split(",");
+        if (arr.length == 2) {
+            arr = Arrays.copyOfRange(arr, 0, 1);
+        }
         for (String s : arr) {
             items.add(new Entry(intent.getStringExtra(ENTRY), s));
         }

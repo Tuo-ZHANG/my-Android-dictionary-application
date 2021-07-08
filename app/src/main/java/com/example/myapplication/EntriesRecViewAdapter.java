@@ -52,10 +52,6 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
             @Override
             public void onClick(View v) {
 //                Toast.makeText(mContext, entries.get(position).getEntry() + " selected", Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(mContext, WebsiteActivity.class);
-//                intent.putExtra(ENTRY, entries.get(position).getEntry());
-//                intent.putExtra(DICTIONARY, entries.get(position).getDictionary());
-//                mContext.startActivity(intent);
                 Intent intent = new Intent(mContext, HtmlsRecViewActivity.class);
                 intent.putExtra(ENTRY, entries.get(position).getEntry());
                 intent.putExtra(DICTIONARY, entries.get(position).getDictionary());
