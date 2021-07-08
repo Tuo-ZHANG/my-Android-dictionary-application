@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.SearchView;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ENTRY = "entry";
     public static final String DICTIONARY = "dictionary";
     private EntriesRecViewAdapter adapter;
-    private HashMap<String, String> types = new HashMap<>();
+    private TreeMap<String, String> types = new TreeMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         AssetManager assetManager = getAssets();
         try {
             String[] dictionaries = Arrays.copyOfRange(assetManager.list(""), 0, assetManager.list("").length - 2);
-            System.out.println(dictionaries.length);
+            ArrayUtils.reverse(dictionaries);
             for (String dictionary : dictionaries) {
                 String[] files = assetManager.list(dictionary);
                 for (String s : files) {

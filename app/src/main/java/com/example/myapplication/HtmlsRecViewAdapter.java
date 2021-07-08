@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
@@ -39,8 +40,12 @@ public class HtmlsRecViewAdapter extends RecyclerView.Adapter<HtmlsRecViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String query = "";
         // path example:"file:///android_asset/conjugation/sein.html"
-        holder.html.loadUrl("file:///android_asset/" + items.get(position).getDictionary() + "/" + items.get(position).getEntry() + ".html");
+        WebSettings settings = holder.html.getSettings();
+        settings.setDefaultTextEncodingName("utf-8");
+        String url = "file:///android_asset/" + items.get(position).getDictionary() + "/" + items.get(position).getEntry() + ".html";
+        holder.html.loadUrl(url);
     }
 
     @Override

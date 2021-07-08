@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -31,11 +33,13 @@ public class HtmlsRecViewActivity extends AppCompatActivity {
         items = new ArrayList<>();
         String[] arr = intent.getStringExtra(DICTIONARY).split(",");
         if (arr.length == 2) {
-            arr = Arrays.copyOfRange(arr, 0, 1);
+//            arr = Arrays.copyOfRange(arr, 0, 1);
+            arr = ArrayUtils.removeElement(arr, "conjugation to lemma");
         }
         for (String s : arr) {
             items.add(new Entry(intent.getStringExtra(ENTRY), s));
         }
+
 
         adapter.setItems(items);
         htmlsRecView.setAdapter(adapter);
