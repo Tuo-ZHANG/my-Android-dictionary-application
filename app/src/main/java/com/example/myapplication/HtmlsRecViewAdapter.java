@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,7 +41,6 @@ public class HtmlsRecViewAdapter extends RecyclerView.Adapter<HtmlsRecViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String query = "";
         // path example:"file:///android_asset/conjugation/sein.html"
         WebSettings settings = holder.html.getSettings();
         settings.setDefaultTextEncodingName("utf-8");

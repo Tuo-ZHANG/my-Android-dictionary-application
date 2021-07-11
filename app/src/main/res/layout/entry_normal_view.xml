@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:paddingBottom="5dp"
-        android:text="entry"
+        android:text="@string/entry"
         android:textColor="@color/black"
         android:textSize="20sp" />
 

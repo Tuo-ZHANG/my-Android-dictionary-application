@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,7 +52,23 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
         holder.txtEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(mContext, entries.get(position).getEntry() + " selected", Toast.LENGTH_SHORT).show();
+                EntryInformationModel entryInformationModel;
+                //the ID one inputs here doesn't matter as it is never accessed later
+                DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
+                if (!databaseHelper.checkIfRecordExists(entries.get(position).getEntry())) {
+                    entryInformationModel = new EntryInformationModel(-1, entries.get(position).getEntry(), 1, true);
+                    boolean success = databaseHelper.addOne(entryInformationModel);
+                    if (success) {
+                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    boolean success = databaseHelper.updateRecord(entries.get(position).getEntry());
+                    if (success) {
+                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried multiple times", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                //send entry and corresponding dictionary to HtmlsRecViewActivity
                 Intent intent = new Intent(mContext, HtmlsRecViewActivity.class);
                 intent.putExtra(ENTRY, entries.get(position).getEntry());
                 intent.putExtra(DICTIONARY, entries.get(position).getDictionary());

@@ -17,20 +17,16 @@ import static com.example.myapplication.MainActivity.ENTRY;
 
 public class HtmlsRecViewActivity extends AppCompatActivity {
 
-    private RecyclerView htmlsRecView;
-    private HtmlsRecViewAdapter adapter;
-    private ArrayList<Entry> items;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_htmls_rec_view);
-        htmlsRecView = findViewById(R.id.htmlsRecView);
-        adapter = new HtmlsRecViewAdapter(this);
+        RecyclerView htmlsRecView = findViewById(R.id.htmlsRecView);
+        HtmlsRecViewAdapter adapter = new HtmlsRecViewAdapter(this);
 
         Intent intent = getIntent();
 
-        items = new ArrayList<>();
+        ArrayList<Entry> items = new ArrayList<>();
         String[] arr = intent.getStringExtra(DICTIONARY).split(",");
         if (arr.length == 2) {
 //            arr = Arrays.copyOfRange(arr, 0, 1);

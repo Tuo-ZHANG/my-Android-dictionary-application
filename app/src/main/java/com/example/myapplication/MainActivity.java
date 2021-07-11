@@ -1,9 +1,5 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,12 +8,15 @@ import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.SearchView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +24,6 @@ import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView entriesRecView;
     private ArrayList<Entry> entries;
     public static final String ENTRY = "entry";
     public static final String DICTIONARY = "dictionary";
@@ -64,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // convert the hashmap to 2 dimension array
+        // convert the treemap to 2 dimension array
         Object[][] arr = new Object[types.size()][2];
         Set setEntries = types.entrySet();
         Iterator entriesIterator = setEntries.iterator();
@@ -79,13 +77,13 @@ public class MainActivity extends AppCompatActivity {
             i++;
         }
         // set entries
-        for (int j = 0; j < arr.length; j++) {
-            entries.add(new Entry(arr[j][0].toString(), arr[j][1].toString()));
+        for (Object[] objects : arr) {
+            entries.add(new Entry(objects[0].toString(), objects[1].toString()));
         }
     }
 
     private void setUpRecyclerView() {
-        entriesRecView = findViewById(R.id.entriesRecView);
+        RecyclerView entriesRecView = findViewById(R.id.entriesRecView);
         adapter = new EntriesRecViewAdapter(this);
         adapter.setEntries(entries);
         entriesRecView.setAdapter(adapter);
