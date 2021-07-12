@@ -10,9 +10,8 @@ import android.os.Bundle;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import static com.example.myapplication.MainActivity.DICTIONARY;
+import static com.example.myapplication.MainActivity.DICTIONARIES;
 import static com.example.myapplication.MainActivity.ENTRY;
 
 public class HtmlsRecViewActivity extends AppCompatActivity {
@@ -27,7 +26,7 @@ public class HtmlsRecViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         ArrayList<Entry> items = new ArrayList<>();
-        String[] arr = intent.getStringExtra(DICTIONARY).split(",");
+        String[] arr = intent.getStringExtra(DICTIONARIES).split(",");
         if (arr.length == 2) {
 //            arr = Arrays.copyOfRange(arr, 0, 1);
             arr = ArrayUtils.removeElement(arr, "conjugation to lemma");

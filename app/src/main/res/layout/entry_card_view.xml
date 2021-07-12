@@ -8,12 +8,12 @@
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="0dp">
 
-    <!--    <RelativeLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content">-->
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content">-->
 
     <TextView
-        android:id="@+id/txtEntry2"
+        android:id="@+id/txtEntryCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"

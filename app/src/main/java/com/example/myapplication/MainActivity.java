@@ -1,14 +1,17 @@
 package com.example.myapplication;
 
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Entry> entries;
     public static final String ENTRY = "entry";
-    public static final String DICTIONARY = "dictionary";
+    public static final String DICTIONARIES = "dictionaries";
     private EntriesRecViewAdapter adapter;
     private TreeMap<String, String> types = new TreeMap<>();
 
@@ -34,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         fillEntries();
         setUpRecyclerView();
@@ -97,6 +104,15 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        int searchPlateId = searchView.getContext().getResources()
+                .getIdentifier("android:id/search_plate", null, null);
+        View v = searchView.findViewById(searchPlateId);
+        v.setBackgroundColor(Color.TRANSPARENT);
+
+        searchView.setQueryHint("Type words in to search");
+        searchView.clearFocus();
 
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import static com.example.myapplication.MainActivity.DICTIONARY;
+import static com.example.myapplication.MainActivity.DICTIONARIES;
 import static com.example.myapplication.MainActivity.ENTRY;
 
 public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAdapter.ViewHolder> implements Filterable {
@@ -34,7 +34,7 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtEntry = itemView.findViewById(R.id.txtEntry2);
+            txtEntry = itemView.findViewById(R.id.txtEntryCard);
         }
     }
 
@@ -71,7 +71,7 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
                 //send entry and corresponding dictionary to HtmlsRecViewActivity
                 Intent intent = new Intent(mContext, HtmlsRecViewActivity.class);
                 intent.putExtra(ENTRY, entries.get(position).getEntry());
-                intent.putExtra(DICTIONARY, entries.get(position).getDictionary());
+                intent.putExtra(DICTIONARIES, entries.get(position).getDictionary());
                 mContext.startActivity(intent);
             }
         });
