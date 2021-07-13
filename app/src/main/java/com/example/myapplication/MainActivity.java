@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -103,6 +105,24 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.dict_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // Do something when collapsed
+                return true;  // Return true to collapse action view
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                //get focus
+                item.getActionView().requestFocus();
+                //get input method
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                return true;  // Return true to expand action view
+            }
+        });
+
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
 
@@ -112,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         v.setBackgroundColor(Color.TRANSPARENT);
 
         searchView.setQueryHint("Type words in to search");
-        searchView.clearFocus();
+//        searchView.clearFocus();
 
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
