@@ -5,7 +5,10 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         android:title="@string/search"
-        app:showAsAction="ifRoom"
-        app:actionLayout="@layout/action_view"/>
-
+        app:actionLayout="@layout/action_view"
+        app:showAsAction="ifRoom|collapseActionView" />
+    <item
+        android:id="@+id/clearDatabase"
+        android:title="@string/clear_query_history"
+        app:showAsAction="never" />
 </menu>
