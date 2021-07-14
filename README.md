@@ -1,7 +1,7 @@
 # my-Android-dictionary-application
 An Android dictionary application. The data of each dictionary entry is in HTML format and are extracted from dictionary of mdx format using Python libraries. 
 
-# Showcase
+## Showcase
 - entries recycler view 
 
   ![alt text](https://github.com/Tuo-ZHANG/my-Android-dictionary-application/blob/master/Screenshot_1625774512.png)
@@ -14,7 +14,7 @@ An Android dictionary application. The data of each dictionary entry is in HTML 
 
   ![alt text](https://github.com/Tuo-ZHANG/my-Android-dictionary-application/blob/master/Screenshot_1625774451.png)
   
-# Acknowledge
+## Acknowledge
 Libraries I have used:
 
 https://bitbucket.org/xwang/mdict-analysis/src/master/
