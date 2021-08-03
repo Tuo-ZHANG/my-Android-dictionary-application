@@ -12,13 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,8 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private EntriesRecViewAdapter adapter;
     private TreeMap<String, String> types = new TreeMap<>();
     WebView webView;
-    String path = "testdict.mdx";
-    String word = "society";
+//    String path = "German Conjugation(185 verbs).mdx";
+    String dict = "Oxford Spanish - English Dictionary.mdx";
+    String word = "programador";
 //    private int EXTERNAL_STORAGE_PERMISSION_CODE = 1;
 
     // Used to load the 'native-lib' library on application startup.
@@ -65,25 +64,26 @@ public class MainActivity extends AppCompatActivity {
 //        setUpRecyclerView();
 
         webView = findViewById(R.id.myWebView);
-        WebSettings settings = webView.getSettings();
-        settings.setDefaultTextEncodingName("utf-8");
+        webView.getSettings().setAllowFileAccess(true);
+//        webView.getSettings().setDefaultTextEncodingName("utf-8");
 
-        File dict = new File(getExternalFilesDir(null), path);
-        if (dict.exists()) {
-
+        File dictionary = new File(getExternalFilesDir(null), dict);
+        if (dictionary.exists()) {
             Log.i("FileInfo", "the absolute path of the parent directory is " + getExternalFilesDir(null).getAbsolutePath());
-            Log.i("FileInfo", "the absolute path of the file is " + dict.getAbsolutePath());
+            Log.i("FileInfo", "the absolute path of the file is " + dictionary.getAbsolutePath());
         } else {
             Log.i("FileInfo", "the file cannot be found");
         }
 
         // Example of a call to a native method
-        String queryReturnedValue = entryPoint(dict.getAbsolutePath(), word);
-//        System.out.println(queryReturnedValue);
-        webView.loadData(queryReturnedValue, "text/html; charset=utf-8", "UTF-8");
+        String queryReturnedValue = entryPoint(dictionary.getAbsolutePath(), word);
+//        webView.loadData(queryReturnedValue, "text/html", null);
+        File dictDirectory = createDictDirectory(dict);
+        File html = createHtmlPage(dictDirectory);
+        webView.loadUrl(html.getAbsolutePath());
 
         isExternalStorageReadable();
-        System.out.println(queryReturnedValue.length());
+        Log.i("length", String.valueOf(queryReturnedValue.length()));
         writeFile(queryReturnedValue);
 
     }
@@ -108,10 +108,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void writeFile (String definition) {
+    private File createDictDirectory(String dict) {
+        return new File(getExternalFilesDir(null).getAbsolutePath() + "/" + dict.substring(0, dict.length() - 4));
+    }
+
+    private File createHtmlPage(File dictDirectory) {
+        return new File(dictDirectory, word + ".html");
+    }
+
+    private void writeFile (String definition) {
         if (isExternalStorageWritable()) {
-            File dictDirectory = new File(getExternalFilesDir(null).getAbsolutePath() + "/" + path.substring(0, path.length() - 4));
-            System.out.println(dictDirectory.getAbsolutePath());
+            File dictDirectory = new File(getExternalFilesDir(null).getAbsolutePath() + "/" + dict.substring(0, dict.length() - 4));
             if (!dictDirectory.exists()) {
                 boolean wasSuccessful = dictDirectory.mkdir();;
                 if (!wasSuccessful) {
