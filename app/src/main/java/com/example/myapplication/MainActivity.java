@@ -4,13 +4,18 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +24,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,18 +42,100 @@ public class MainActivity extends AppCompatActivity {
     public static final String DICTIONARIES = "dictionaries";
     private EntriesRecViewAdapter adapter;
     private TreeMap<String, String> types = new TreeMap<>();
+    WebView webView;
+    String path = "testdict.mdx";
+    String word = "society";
+//    private int EXTERNAL_STORAGE_PERMISSION_CODE = 1;
+
+    // Used to load the 'native-lib' library on application startup.
+    static {
+        System.loadLibrary("jni-layer");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.html_card_view);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        fillEntries();
-        setUpRecyclerView();
+//        fillEntries();
+//        setUpRecyclerView();
+
+        webView = findViewById(R.id.myWebView);
+        WebSettings settings = webView.getSettings();
+        settings.setDefaultTextEncodingName("utf-8");
+
+        File dict = new File(getExternalFilesDir(null), path);
+        if (dict.exists()) {
+
+            Log.i("FileInfo", "the absolute path of the parent directory is " + getExternalFilesDir(null).getAbsolutePath());
+            Log.i("FileInfo", "the absolute path of the file is " + dict.getAbsolutePath());
+        } else {
+            Log.i("FileInfo", "the file cannot be found");
+        }
+
+        // Example of a call to a native method
+        String queryReturnedValue = entryPoint(dict.getAbsolutePath(), word);
+//        System.out.println(queryReturnedValue);
+        webView.loadData(queryReturnedValue, "text/html; charset=utf-8", "UTF-8");
+
+        isExternalStorageReadable();
+        System.out.println(queryReturnedValue.length());
+        writeFile(queryReturnedValue);
+
+    }
+    public native String entryPoint(String argument1, String argument2);
+
+    private boolean isExternalStorageWritable() {
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            Log.i("StateInfo", "Yes, it is writable!");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isExternalStorageReadable() {
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState())) {
+            Log.i("StateInfo", "Yes, it is readable!");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void writeFile (String definition) {
+        if (isExternalStorageWritable()) {
+            File dictDirectory = new File(getExternalFilesDir(null).getAbsolutePath() + "/" + path.substring(0, path.length() - 4));
+            System.out.println(dictDirectory.getAbsolutePath());
+            if (!dictDirectory.exists()) {
+                boolean wasSuccessful = dictDirectory.mkdir();;
+                if (!wasSuccessful) {
+                    Log.i("FileInfo", "directory creation is not successful");
+                }
+            }
+            File textFile = new File(dictDirectory, word + ".html");
+            if (!textFile.exists()) {
+                Log.i("FileInfo", "file exist");
+                try {
+                    FileOutputStream fos = new FileOutputStream(textFile);
+                    fos.write(definition.getBytes());
+                    fos.close();
+
+                    Toast.makeText(this, "saved to" + textFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Toast.makeText(this, "cannot write to external storage", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void fillEntries() {

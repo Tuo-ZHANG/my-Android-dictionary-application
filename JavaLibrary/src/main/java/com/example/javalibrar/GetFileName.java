@@ -6,7 +6,7 @@ import java.io.File;
 public class GetFileName {
 
     public static String[] run() {
-        File folder = new File("E:/study/cs/MyApplication/app/src/main/assets/conjugation");
+        File folder = new File("E:/study/cs/my-Android-dictionary-application/app/src/main/assets/conjugation");
         File[] listOfFiles = folder.listFiles();
         String[] headingArray = new String[listOfFiles.length];
         for (int i = 0; i < listOfFiles.length; i++) {
