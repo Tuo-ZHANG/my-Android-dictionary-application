@@ -1,5 +1,5 @@
 # my-Android-dictionary-application
-An Android dictionary application. The data of each dictionary entry is in HTML format and are extracted from dictionary of mdx format using Python libraries. 
+An Android dictionary application. I have used the [mdict-jni-query-library](https://github.com/Tuo-ZHANG/mdict-jni-query-library) I have written to access the dictionary of mdx format. 
 
 ## Showcase
 - entries recycler view 
@@ -15,8 +15,15 @@ An Android dictionary application. The data of each dictionary entry is in HTML 
   ![alt text](https://github.com/Tuo-ZHANG/my-Android-dictionary-application/blob/master/Screenshot_1625774451.png)
   
 ## Acknowledge
-Libraries I have used:
+Many thanks to [terasum](https://github.com/terasum) for the consultation he provided. 
 
+## Reference
 https://bitbucket.org/xwang/mdict-analysis/src/master/
 
 https://github.com/zhansliu/writemdict
+
+https://github.com/terasum/js-mdict
+
+https://github.com/dictlab/mdict-cpp
+
+https://github.com/Tuo-ZHANG/mdict-jni-query-library
