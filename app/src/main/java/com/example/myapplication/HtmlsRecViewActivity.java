@@ -38,10 +38,7 @@ public class HtmlsRecViewActivity extends MainActivity {
 
         ArrayList<Entry> items = new ArrayList<>();
         String[] arr = intent.getStringExtra(DICTIONARIES).split(",");
-        if (arr.length == 2) {
-//            arr = Arrays.copyOfRange(arr, 0, 1);
-            arr = ArrayUtils.removeElement(arr, "conjugation to lemma");
-        }
+
         for (String s : arr) {
             items.add(new Entry(intent.getStringExtra(ENTRY), s));
         }

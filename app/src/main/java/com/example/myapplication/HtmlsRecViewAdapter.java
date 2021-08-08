@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
@@ -17,6 +18,11 @@ public class HtmlsRecViewAdapter extends RecyclerView.Adapter<HtmlsRecViewAdapte
 
     private ArrayList<Entry> items = new ArrayList<>();
     private Context mContext;
+    public float originalX;
+    public float originalY;
+    public float newX;
+    public float newY;
+
 
     public HtmlsRecViewAdapter(Context mContext) {
         this.mContext = mContext;
@@ -41,11 +47,32 @@ public class HtmlsRecViewAdapter extends RecyclerView.Adapter<HtmlsRecViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // path example:"file:///android_asset/conjugation/sein.html"
         WebSettings settings = holder.html.getSettings();
         settings.setDefaultTextEncodingName("utf-8");
-        String url = "file:///android_asset/" + items.get(position).getDictionary() + "/" + items.get(position).getEntry() + ".html";
+        settings.setAllowFileAccess(true);
+        String url = mContext.getExternalFilesDir(null).getAbsolutePath() + "/" + items.get(position).getDictionary() + "/" + items.get(position).getEntry() + ".html";
         holder.html.loadUrl(url);
+
+        holder.html.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        originalX = event.getX();
+                        originalY = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        newX = event.getX();
+                        newY = event.getY();
+                }
+                float movementX = Math.abs(newX - originalX);
+                float movementY = Math.abs(newY- originalY);
+                if (movementX < movementY) {
+                    holder.html.getParent().requestDisallowInterceptTouchEvent(true);
+                }
+                return false;
+            }
+        });
     }
 
     @Override

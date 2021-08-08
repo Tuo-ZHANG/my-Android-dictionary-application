@@ -8,7 +8,7 @@
         app:actionLayout="@layout/action_view"
         app:showAsAction="ifRoom|collapseActionView" />
     <item
-        android:id="@+id/clearDatabase"
+        android:id="@+id/clearTable"
         android:title="@string/clear_query_history"
         app:showAsAction="never" />
 </menu>

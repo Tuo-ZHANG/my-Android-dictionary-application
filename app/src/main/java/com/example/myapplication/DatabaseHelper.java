@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -84,5 +85,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else {
             return true;
         }
+    }
+
+    public void deleteRecords() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ ENTRY_TABLE);
+    }
+
+    public boolean isEmpty(){
+        SQLiteDatabase database = this.getReadableDatabase();
+        long numberOfRows = DatabaseUtils.queryNumEntries(database, ENTRY_TABLE);
+        return numberOfRows == 0;
     }
 }

@@ -5,12 +5,14 @@ public class Test {
 //        GetFileName.run();
 //        System.out.println(GetFileName.run()[0]);
 //        System.out.println(Arrays.toString(GetFileName.run()));
-        String[] headingArray = GetFileName.run();
-        System.out.println(headingArray[0]);
+//        String[] headingArray = GetFileName.run();
+//        System.out.println(headingArray[0]);
 //        System.out.println("first entry");
 
-        System.out.println("success!");
-        System.out.println(System.getProperty("java.library.path"));
+//        System.out.println("success!");
+//        System.out.println(System.getProperty("java.library.path"));
+        String string = "s.css";
+        System.out.println(string.substring(string.length() - 4));
     }
 
 
