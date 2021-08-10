@@ -39,11 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private EntriesRecViewAdapter adapter;
     private TreeMap<String, String> types = new TreeMap<>();
 
-    float originalX;
-    float originalY;
-    float newX;
-    float newY;
-
 //    private int EXTERNAL_STORAGE_PERMISSION_CODE = 1;
 
     // Used to load the 'native-lib' library on application startup.
@@ -60,18 +55,18 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        ArrayList<File> dictioanryDirectories = getDictionaryDirectories();
-        Log.i("FileInfo", "the length of the dictionary directories is " + dictioanryDirectories.size());
+        ArrayList<File> dictionaryDirectories = getDictionaryDirectories();
+//        Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
 
-        fillEntries(dictioanryDirectories);
-        Log.i("FileInfo", "the length of the entries is " + entries.size());
+        fillEntries(dictionaryDirectories);
+//        Log.i("FileInfo", "the length of the entries is " + entries.size());
         setUpRecyclerView();
     }
     public native String entryPoint(String argument1, String argument2);
 
     private boolean isExternalStorageWritable() {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            Log.i("StateInfo", "Yes, it is writable!");
+//            Log.i("StateInfo", "Yes, it is writable!");
             return true;
         } else {
             return false;
@@ -81,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isExternalStorageReadable() {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState())) {
-            Log.i("StateInfo", "Yes, it is readable!");
+//            Log.i("StateInfo", "Yes, it is readable!");
             return true;
         } else {
             return false;
@@ -102,12 +97,12 @@ public class MainActivity extends AppCompatActivity {
             if (!dictDirectory.exists()) {
                 boolean wasSuccessful = dictDirectory.mkdir();;
                 if (!wasSuccessful) {
-                    Log.i("FileInfo", "directory creation is not successful");
+//                    Log.i("FileInfo", "directory creation is not successful");
                 }
             }
             File htmlPage = new File(dictDirectory, word + ".html");
             if (!htmlPage.exists()) {
-                Log.i("FileInfo", "file exist");
+//                Log.i("FileInfo", "file exist");
                 try {
                     FileOutputStream fos = new FileOutputStream(htmlPage);
                     fos.write(definition.getBytes());
@@ -125,10 +120,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void deleteLocalHtmls(ArrayList<File> dictionaryDirectories) {
+        for (File dictionaryDirectory : dictionaryDirectories) {
+            String[] files = dictionaryDirectory.list();
+            for (String s : files) {
+                if (s.endsWith(".css")) {
+                    continue;
+                } else {
+                    File file = new File(dictionaryDirectory, s);
+                    file.delete();
+                }
+            }
+        }
+    }
+
     private ArrayList<File> getDictionaryDirectories() {
         String [] fileList = getExternalFilesDir(null).list();
         ArrayList<File> dictionaryDirectories = new ArrayList<File>();
-        Log.i("FileInfo", "the file list is " + Arrays.toString(fileList));
+//        Log.i("FileInfo", "the file list is " + Arrays.toString(fileList));
         for (String file : fileList) {
             File fileObject = new File(getExternalFilesDir(null), file);
             if (fileObject.isDirectory()) {
@@ -141,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<File> getDictionaries() {
         String [] fileList = getExternalFilesDir(null).list();
         ArrayList<File> dictionaries = new ArrayList<File>();
-        Log.i("FileInfo", "the file list is " + Arrays.toString(fileList));
+//        Log.i("FileInfo", "the file list is " + Arrays.toString(fileList));
         for (String file : fileList) {
             File fileObject = new File(getExternalFilesDir(null), file);
             if (!fileObject.isDirectory()) {
@@ -194,30 +203,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.setEntries(entries);
         entriesRecView.setAdapter(adapter);
         entriesRecView.setLayoutManager(new LinearLayoutManager(this));
-
-//        entriesRecView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        originalX = event.getX();
-//                        originalY = event.getY();
-//                        break;
-//                    case MotionEvent.ACTION_MOVE:
-//                        newX = event.getX();
-//                        newY = event.getY();
-//                }
-//                float movementX = Math.abs(newX - originalX);
-//                float movementY = Math.abs(newY- originalY);
-//                if (movementX < movementY) {
-//                    adapter = new EntriesRecViewAdapter(MainActivity.this);
-//                    adapter.setEntries(entries);
-//                    entriesRecView.setAdapter(adapter);
-//                    entriesRecView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-//                }
-//                return false;
-//            }
-//        });
     }
 
     @Override
@@ -225,8 +210,8 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.dict_menu, menu);
 
-        MenuItem deletionButton = menu.findItem(R.id.clearTable);
-        deletionButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        MenuItem buttonDeleteHistory = menu.findItem(R.id.clear_query_history);
+        buttonDeleteHistory.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
@@ -234,6 +219,17 @@ public class MainActivity extends AppCompatActivity {
                     databaseHelper.deleteRecords();
                     Toast.makeText(getApplicationContext(), "the query history is cleared", Toast.LENGTH_LONG).show();
                 }
+                return true;
+            }
+        });
+
+        MenuItem buttonDeleteLocalHtmls = menu.findItem(R.id.clear_local_htmls);
+        buttonDeleteLocalHtmls.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                ArrayList<File> dictionaryDirectories = getDictionaryDirectories();
+                deleteLocalHtmls(dictionaryDirectories);
+                Toast.makeText(getApplicationContext(), "local htmls are all deleted", Toast.LENGTH_LONG).show();
                 return true;
             }
         });
@@ -261,8 +257,11 @@ public class MainActivity extends AppCompatActivity {
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
 
-        int searchPlateId = searchView.getContext().getResources()
-                .getIdentifier("android:id/search_plate", null, null);
+        int searchPlateId =
+                searchView.
+                getContext().
+                getResources().
+                getIdentifier("android:id/search_plate", null, null);
         View v = searchView.findViewById(searchPlateId);
         v.setBackgroundColor(Color.TRANSPARENT);
 
@@ -277,11 +276,11 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(getApplicationContext(), "search " + query + " in the dictionaries", Toast.LENGTH_LONG).show();
                 ArrayList<File> dictionaries = getDictionaries();
                 boolean searchSuccess = false;
-                Log.i("FileInfo", "the length of the dictionary list is " + dictionaries.size());
+//                Log.i("FileInfo", "the length of the dictionary list is " + dictionaries.size());
                 for (File dictionary : dictionaries) {
                     if (dictionary.exists()) {
-                        Log.i("FileInfo", "the absolute path of the parent directory is " + getExternalFilesDir(null).getAbsolutePath());
-                        Log.i("FileInfo", "the absolute path of the file is " + dictionary.getAbsolutePath());
+//                        Log.i("FileInfo", "the absolute path of the parent directory is " + getExternalFilesDir(null).getAbsolutePath());
+//                        Log.i("FileInfo", "the absolute path of the file is " + dictionary.getAbsolutePath());
                         // Example of a call to a native method
                         String queryReturnedValue = entryPoint(dictionary.getAbsolutePath(), query);
 //                      webView.loadData(queryReturnedValue, "text/html", null);
@@ -295,17 +294,17 @@ public class MainActivity extends AppCompatActivity {
 //                            Toast.makeText(getApplicationContext(), "entry does not exist in " + dictionary.getName(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Log.i("FileInfo", "the file cannot be found");
+//                        Log.i("FileInfo", "the file cannot be found");
                         Toast.makeText(getApplicationContext(), "dictionary does not exist", Toast.LENGTH_LONG).show();
                     }
                 }
 
                 if (searchSuccess) {
                     ArrayList<File> dictioanryDirectories = getDictionaryDirectories();
-                    Log.i("FileInfo", "the length of the dictionary directories is " + dictioanryDirectories.size());
+//                    Log.i("FileInfo", "the length of the dictionary directories is " + dictioanryDirectories.size());
 
                     fillEntries(dictioanryDirectories);
-                    Log.i("FileInfo", "the length of the entries is " + entries.size());
+//                    Log.i("FileInfo", "the length of the entries is " + entries.size());
 
                     EntryInformationModel entryInformationModel;
                     //the ID one inputs here doesn't matter as it is never accessed later
@@ -317,6 +316,8 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(searchView.getContext(), query + " queried", Toast.LENGTH_SHORT).show();
                         }
                     }
+
+//                    adapter.setEntries(entries);
 
                     Intent intent = new Intent(searchView.getContext(), HtmlsRecViewActivity.class);
                     intent.putExtra(ENTRY, query);

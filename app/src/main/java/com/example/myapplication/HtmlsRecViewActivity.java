@@ -25,8 +25,7 @@ public class HtmlsRecViewActivity extends MainActivity {
         setContentView(R.layout.activity_htmls_rec_view);
         RecyclerView htmlsRecView = findViewById(R.id.htmlsRecView);
 
-
-        HtmlsRecViewAdapter adapter = new HtmlsRecViewAdapter(this);
+        HtmlsRecViewAdapter adapterLocal = new HtmlsRecViewAdapter(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -40,8 +39,8 @@ public class HtmlsRecViewActivity extends MainActivity {
             items.add(new Entry(intent.getStringExtra(ENTRY), s));
         }
 
-        adapter.setItems(items);
-        htmlsRecView.setAdapter(adapter);
+        adapterLocal.setItems(items);
+        htmlsRecView.setAdapter(adapterLocal);
         htmlsRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         SnapHelper snapHelper = new PagerSnapHelper();
