@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
@@ -37,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String DICTIONARIES = "dictionaries";
     private EntriesRecViewAdapter adapter;
     private TreeMap<String, String> types = new TreeMap<>();
+
+    float originalX;
+    float originalY;
+    float newX;
+    float newY;
 
 //    private int EXTERNAL_STORAGE_PERMISSION_CODE = 1;
 
@@ -188,6 +194,30 @@ public class MainActivity extends AppCompatActivity {
         adapter.setEntries(entries);
         entriesRecView.setAdapter(adapter);
         entriesRecView.setLayoutManager(new LinearLayoutManager(this));
+
+//        entriesRecView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        originalX = event.getX();
+//                        originalY = event.getY();
+//                        break;
+//                    case MotionEvent.ACTION_MOVE:
+//                        newX = event.getX();
+//                        newY = event.getY();
+//                }
+//                float movementX = Math.abs(newX - originalX);
+//                float movementY = Math.abs(newY- originalY);
+//                if (movementX < movementY) {
+//                    adapter = new EntriesRecViewAdapter(MainActivity.this);
+//                    adapter.setEntries(entries);
+//                    entriesRecView.setAdapter(adapter);
+//                    entriesRecView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+//                }
+//                return false;
+//            }
+//        });
     }
 
     @Override
@@ -246,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
 //                Toast.makeText(getApplicationContext(), "search " + query + " in the dictionaries", Toast.LENGTH_LONG).show();
                 ArrayList<File> dictionaries = getDictionaries();
+                boolean searchSuccess = false;
                 Log.i("FileInfo", "the length of the dictionary list is " + dictionaries.size());
                 for (File dictionary : dictionaries) {
                     if (dictionary.exists()) {
@@ -257,6 +288,9 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("length", String.valueOf(queryReturnedValue.length()));
                         if (queryReturnedValue.length() != 0) {
                             writeFile(dictionary.getName(), query, queryReturnedValue);
+                            if (!searchSuccess) {
+                                searchSuccess = true;
+                            }
                         } else {
 //                            Toast.makeText(getApplicationContext(), "entry does not exist in " + dictionary.getName(), Toast.LENGTH_LONG).show();
                         }
@@ -266,27 +300,31 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                ArrayList<File> dictioanryDirectories = getDictionaryDirectories();
-                Log.i("FileInfo", "the length of the dictionary directories is " + dictioanryDirectories.size());
+                if (searchSuccess) {
+                    ArrayList<File> dictioanryDirectories = getDictionaryDirectories();
+                    Log.i("FileInfo", "the length of the dictionary directories is " + dictioanryDirectories.size());
 
-                fillEntries(dictioanryDirectories);
-                Log.i("FileInfo", "the length of the entries is " + entries.size());
+                    fillEntries(dictioanryDirectories);
+                    Log.i("FileInfo", "the length of the entries is " + entries.size());
 
-                EntryInformationModel entryInformationModel;
-                //the ID one inputs here doesn't matter as it is never accessed later
-                DatabaseHelper databaseHelper = new DatabaseHelper(searchView.getContext());
-                if (!databaseHelper.checkIfRecordExists(query)) {
-                    entryInformationModel = new EntryInformationModel(-1, query, 1, true);
-                    boolean success = databaseHelper.addOne(entryInformationModel);
-                    if (success) {
-                        Toast.makeText(searchView.getContext(), query + " queried", Toast.LENGTH_SHORT).show();
+                    EntryInformationModel entryInformationModel;
+                    //the ID one inputs here doesn't matter as it is never accessed later
+                    DatabaseHelper databaseHelper = new DatabaseHelper(searchView.getContext());
+                    if (!databaseHelper.checkIfRecordExists(query)) {
+                        entryInformationModel = new EntryInformationModel(-1, query, 1, true);
+                        boolean success = databaseHelper.addOne(entryInformationModel);
+                        if (success) {
+                            Toast.makeText(searchView.getContext(), query + " queried", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
 
-                Intent intent = new Intent(searchView.getContext(), HtmlsRecViewActivity.class);
-                intent.putExtra(ENTRY, query);
-                intent.putExtra(DICTIONARIES, types.get(query));
-                searchView.getContext().startActivity(intent);
+                    Intent intent = new Intent(searchView.getContext(), HtmlsRecViewActivity.class);
+                    intent.putExtra(ENTRY, query);
+                    intent.putExtra(DICTIONARIES, types.get(query));
+                    searchView.getContext().startActivity(intent);
+                } else {
+                    Toast.makeText(searchView.getContext(), "query cannot be found in all dictionaries", Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
 

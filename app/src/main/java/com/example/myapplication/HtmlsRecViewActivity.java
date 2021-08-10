@@ -40,14 +40,12 @@ public class HtmlsRecViewActivity extends MainActivity {
             items.add(new Entry(intent.getStringExtra(ENTRY), s));
         }
 
-
         adapter.setItems(items);
         htmlsRecView.setAdapter(adapter);
         htmlsRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(htmlsRecView);
-
     }
 
     @Override
