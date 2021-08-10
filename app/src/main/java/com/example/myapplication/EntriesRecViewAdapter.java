@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,10 +30,14 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txtEntry;
+        private TextView queryHistory;
+        private TextView placeholder;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtEntry = itemView.findViewById(R.id.txtEntryCard);
+            txtEntry = itemView.findViewById(R.id.txt_entry_card);
+            queryHistory = itemView.findViewById(R.id.query_history);
+            placeholder = itemView.findViewById(R.id.placeholder);
         }
     }
 
@@ -48,24 +51,39 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.txtEntry.setText(entries.get(position).getEntry());
+        holder.placeholder.setText("");
+        holder.queryHistory.setText("");
+
+        DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
+        int quriedTimes = databaseHelper.returnQuriedTimes(entries.get(position).getEntry());
+        if (quriedTimes > 0) {
+            holder.placeholder.setText(R.string.quried);
+            if (quriedTimes == 1) {
+                holder.queryHistory.setText(R.string.once);
+            } else if (quriedTimes == 2) {
+                holder.queryHistory.setText(R.string.twice);
+            } else {
+                String stringDisplayed = quriedTimes + " times";
+                holder.queryHistory.setText(stringDisplayed);
+            }
+        }
 
         holder.txtEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EntryInformationModel entryInformationModel;
                 //the ID one inputs here doesn't matter as it is never accessed later
-                DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
                 if (!databaseHelper.checkIfRecordExists(entries.get(position).getEntry())) {
                     entryInformationModel = new EntryInformationModel(-1, entries.get(position).getEntry(), 1, true);
                     boolean success = databaseHelper.addOne(entryInformationModel);
                     if (success) {
-                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
                     boolean success = databaseHelper.updateRecord(entries.get(position).getEntry());
                     if (success) {
-                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried multiple times", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried multiple times", Toast.LENGTH_SHORT).show();
                     }
                 }
                 //send entry and corresponding dictionary to HtmlsRecViewActivity

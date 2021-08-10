@@ -48,6 +48,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public int returnQuriedTimes(String record) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String queryString = "SELECT " + COLUMN_QUERIED_TIMES + " FROM " + ENTRY_TABLE + " WHERE "
+                + COLUMN_ENTRY + "=?";
+        Cursor cursor= db.rawQuery(queryString, new String [] {record});
+        if (cursor.moveToFirst()) {
+            int queriedTimes = cursor.getInt(0);
+            cursor.close();
+            return queriedTimes;
+        } else {
+            cursor.close();
+            return 0;
+        }
+    }
+
     public boolean checkIfRecordExists(String record) {
         SQLiteDatabase db = this.getReadableDatabase();
         String queryString = "SELECT " + COLUMN_ENTRY + " FROM " + ENTRY_TABLE + " WHERE "
@@ -89,7 +105,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteRecords() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from "+ ENTRY_TABLE);
+        db.execSQL("delete from " + ENTRY_TABLE);
+        db.execSQL("delete from sqlite_sequence where name='" + ENTRY_TABLE + "'");
     }
 
     public boolean isEmpty(){

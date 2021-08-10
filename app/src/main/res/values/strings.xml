@@ -3,4 +3,8 @@
     <string name="search">Search</string>
     <string name="entry">entry</string>
     <string name="clear_query_history">clear query history</string>
+    <string name="query_history">query history</string>
+    <string name="quried">quried</string>
+    <string name="once">once</string>
+    <string name="twice">twice</string>
 </resources>

@@ -10,9 +10,11 @@ import androidx.recyclerview.widget.SnapHelper;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class HtmlsRecViewActivity extends MainActivity {

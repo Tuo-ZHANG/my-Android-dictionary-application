@@ -145,9 +145,9 @@ public class MainActivity extends AppCompatActivity {
         return dictionaries;
     }
 
-    private void fillEntries(ArrayList<File> dictioanryDirectories) {
+    private void fillEntries(ArrayList<File> dictionaryDirectories) {
         entries = new ArrayList<>();
-        for (File dictionaryDirectory : dictioanryDirectories) {
+        for (File dictionaryDirectory : dictionaryDirectories) {
             String[] files = dictionaryDirectory.list();
             for (String s : files) {
                 if (s.endsWith(".css")) {
@@ -271,7 +271,6 @@ public class MainActivity extends AppCompatActivity {
 
                 fillEntries(dictioanryDirectories);
                 Log.i("FileInfo", "the length of the entries is " + entries.size());
-                setUpRecyclerView();
 
                 EntryInformationModel entryInformationModel;
                 //the ID one inputs here doesn't matter as it is never accessed later
