@@ -63,7 +63,7 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
             } else if (quriedTimes == 2) {
                 holder.queryHistory.setText(R.string.twice);
             } else {
-                String stringDisplayed = quriedTimes + " times";
+                String stringDisplayed = String.valueOf(quriedTimes) + " times";
                 holder.queryHistory.setText(stringDisplayed);
             }
         }

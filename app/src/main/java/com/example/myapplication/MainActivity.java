@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String DICTIONARIES = "dictionaries";
     private EntriesRecViewAdapter adapter;
     private TreeMap<String, String> types = new TreeMap<>();
-
+    RecyclerView entriesRecView;
 //    private int EXTERNAL_STORAGE_PERMISSION_CODE = 1;
 
     // Used to load the 'native-lib' library on application startup.
@@ -55,13 +55,29 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        entriesRecView = findViewById(R.id.entriesRecView);
+
         ArrayList<File> dictionaryDirectories = getDictionaryDirectories();
 //        Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
 
         fillEntries(dictionaryDirectories);
 //        Log.i("FileInfo", "the length of the entries is " + entries.size());
+
         setUpRecyclerView();
     }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+//        Log.i("lifecycle", "onRestart: ");
+
+//        Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
+
+//        Log.i("FileInfo", "the length of the entries is " + entries.size());
+
+        adapter.setEntries(entries);
+    }
+
     public native String entryPoint(String argument1, String argument2);
 
     private boolean isExternalStorageWritable() {
@@ -198,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-        RecyclerView entriesRecView = findViewById(R.id.entriesRecView);
         adapter = new EntriesRecViewAdapter(this);
         adapter.setEntries(entries);
         entriesRecView.setAdapter(adapter);
@@ -217,8 +232,9 @@ public class MainActivity extends AppCompatActivity {
                 DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
                 if (!databaseHelper.isEmpty()) {
                     databaseHelper.deleteRecords();
-                    Toast.makeText(getApplicationContext(), "the query history is cleared", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "the query history is cleared", Toast.LENGTH_LONG).show();
                 }
+                adapter.notifyDataSetChanged();
                 return true;
             }
         });
@@ -229,7 +245,10 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 ArrayList<File> dictionaryDirectories = getDictionaryDirectories();
                 deleteLocalHtmls(dictionaryDirectories);
-                Toast.makeText(getApplicationContext(), "local htmls are all deleted", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "local htmls are all deleted", Toast.LENGTH_LONG).show();
+
+                entries.clear();
+                adapter.notifyDataSetChanged();
                 return true;
             }
         });
