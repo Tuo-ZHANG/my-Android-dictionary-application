@@ -59,11 +59,11 @@ public class MainActivity extends AppCompatActivity {
         entriesRecView = findViewById(R.id.entriesRecView);
 
         dictionaryDirectories = getDictionaryDirectories();
-        Log.i("FileInfo", "the file list is " + dictionaryDirectories.toString());
+//        Log.i("FileInfo", "the file list is " + dictionaryDirectories.toString());
 //        Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
 
         fillEntries(dictionaryDirectories);
-        Log.i("FileInfo", "the file list is " + entries.toString());
+//        Log.i("FileInfo", "the file list is " + entries.toString());
 //        Log.i("FileInfo", "the length of the entries is " + entries.size());
 
         setUpRecyclerView();
@@ -260,24 +260,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-                String query = databaseHelper.getLastQuery();
 
-                for (File dictionaryDirectory : dictionaryDirectories) {
-                    String[] files = dictionaryDirectory.list();
-                    for (String s : files) {
-                        if (s.startsWith(query)) {
-                            File file = new File(dictionaryDirectory, s);
-                            file.delete();
+                if (!databaseHelper.isEmpty()) {
+                    String query = databaseHelper.getLastQuery();
+
+                    for (File dictionaryDirectory : dictionaryDirectories) {
+                        String[] files = dictionaryDirectory.list();
+                        for (String s : files) {
+                            if (s.startsWith(query)) {
+                                File file = new File(dictionaryDirectory, s);
+                                file.delete();
+                            }
                         }
                     }
-                }
-                if (!databaseHelper.isEmpty()) {
-                    databaseHelper.deleteLastRow();
-                }
 
-                types.clear();
-                fillEntries(dictionaryDirectories);
-                adapter.setEntries(entries);
+                    databaseHelper.deleteLastRow();
+
+                    types.clear();
+                    fillEntries(dictionaryDirectories);
+                    adapter.setEntries(entries);
+                }
                 return true;
             }
         });
