@@ -8,4 +8,5 @@
     <string name="once">once</string>
     <string name="twice">twice</string>
     <string name="clear_local_htmls">clear local htmls</string>
+    <string name="delete_last_query">delete last query</string>
 </resources>

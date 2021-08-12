@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private EntriesRecViewAdapter adapter;
     private TreeMap<String, String> types = new TreeMap<>();
     RecyclerView entriesRecView;
+    ArrayList<File> dictionaryDirectories;
 //    private int EXTERNAL_STORAGE_PERMISSION_CODE = 1;
 
     // Used to load the 'native-lib' library on application startup.
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         entriesRecView = findViewById(R.id.entriesRecView);
 
-        ArrayList<File> dictionaryDirectories = getDictionaryDirectories();
+        dictionaryDirectories = getDictionaryDirectories();
 //        Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
 
         fillEntries(dictionaryDirectories);
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void deleteLocalHtmls(ArrayList<File> dictionaryDirectories) {
+    private void deleteLocalHtmls() {
         for (File dictionaryDirectory : dictionaryDirectories) {
             String[] files = dictionaryDirectory.list();
             for (String s : files) {
@@ -243,12 +244,38 @@ public class MainActivity extends AppCompatActivity {
         buttonDeleteLocalHtmls.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ArrayList<File> dictionaryDirectories = getDictionaryDirectories();
-                deleteLocalHtmls(dictionaryDirectories);
+                deleteLocalHtmls();
 //                Toast.makeText(getApplicationContext(), "local htmls are all deleted", Toast.LENGTH_LONG).show();
 
                 entries.clear();
                 adapter.notifyDataSetChanged();
+                return true;
+            }
+        });
+
+        MenuItem buttonDeleteLastQuery = menu.findItem(R.id.delete_last_query);
+        buttonDeleteLastQuery.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+                String query = databaseHelper.getLastQuery();
+
+                for (File dictionaryDirectory : dictionaryDirectories) {
+                    String[] files = dictionaryDirectory.list();
+                    for (String s : files) {
+                        if (s.startsWith(query)) {
+                            File file = new File(dictionaryDirectory, s);
+                            file.delete();
+                        }
+                    }
+                }
+                if (!databaseHelper.isEmpty()) {
+                    databaseHelper.deleteLastRow();
+                }
+
+                types.clear();
+                fillEntries(dictionaryDirectories);
+                adapter.setEntries(entries);
                 return true;
             }
         });
@@ -314,15 +341,14 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } else {
 //                        Log.i("FileInfo", "the file cannot be found");
-                        Toast.makeText(getApplicationContext(), "dictionary does not exist", Toast.LENGTH_LONG).show();
+                        Toast.makeText(searchView.getContext(), "dictionary does not exist", Toast.LENGTH_LONG).show();
                     }
                 }
 
                 if (searchSuccess) {
-                    ArrayList<File> dictioanryDirectories = getDictionaryDirectories();
-//                    Log.i("FileInfo", "the length of the dictionary directories is " + dictioanryDirectories.size());
+//                    Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
 
-                    fillEntries(dictioanryDirectories);
+                    fillEntries(dictionaryDirectories);
 //                    Log.i("FileInfo", "the length of the entries is " + entries.size());
 
                     EntryInformationModel entryInformationModel;

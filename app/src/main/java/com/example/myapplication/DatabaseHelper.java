@@ -105,8 +105,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteRecords() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from " + ENTRY_TABLE);
-        db.execSQL("delete from sqlite_sequence where name='" + ENTRY_TABLE + "'");
+        db.execSQL("DELETE FROM " + ENTRY_TABLE);
+        db.execSQL("DELETE FROM sqlite_sequence WHERE name='" + ENTRY_TABLE + "'");
+    }
+
+    public void deleteLastRow() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + ENTRY_TABLE + " WHERE id = (SELECT MAX(id) FROM " + ENTRY_TABLE + ")");
+        db.execSQL("DELETE FROM sqlite_sequence WHERE name='" + ENTRY_TABLE + "'");
+
+    }
+
+    public String getLastQuery() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String queryString = "SELECT " + COLUMN_ENTRY + " FROM " + ENTRY_TABLE + " WHERE id = (SELECT MAX(id) FROM " + ENTRY_TABLE + ")";
+        Cursor cursor= db.rawQuery(queryString, new String [] {});
+        if (cursor.moveToFirst()) {
+            String query = cursor.getString(0);
+            cursor.close();
+            return query;
+        } else {
+            cursor.close();
+            return null;
+        }
     }
 
     public boolean isEmpty(){

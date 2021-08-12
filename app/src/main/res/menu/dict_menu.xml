@@ -15,4 +15,8 @@
         android:id="@+id/clear_local_htmls"
         android:title="@string/clear_local_htmls"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/delete_last_query"
+        android:title="@string/delete_last_query"
+        app:showAsAction="never" />
 </menu>
