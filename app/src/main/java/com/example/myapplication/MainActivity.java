@@ -59,9 +59,11 @@ public class MainActivity extends AppCompatActivity {
         entriesRecView = findViewById(R.id.entriesRecView);
 
         dictionaryDirectories = getDictionaryDirectories();
+        Log.i("FileInfo", "the file list is " + dictionaryDirectories.toString());
 //        Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
 
         fillEntries(dictionaryDirectories);
+        Log.i("FileInfo", "the file list is " + entries.toString());
 //        Log.i("FileInfo", "the length of the entries is " + entries.size());
 
         setUpRecyclerView();
@@ -72,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
 //        Log.i("lifecycle", "onRestart: ");
 
-//        Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
+//        Log.i("FileInfo", "the size of the dictionary directories is " + dictionaryDirectories.size());
 
-//        Log.i("FileInfo", "the length of the entries is " + entries.size());
+//        Log.i("FileInfo", "the size of the entries is " + entries.size());
 
         adapter.setEntries(entries);
     }
@@ -234,8 +236,8 @@ public class MainActivity extends AppCompatActivity {
                 if (!databaseHelper.isEmpty()) {
                     databaseHelper.deleteRecords();
 //                    Toast.makeText(getApplicationContext(), "the query history is cleared", Toast.LENGTH_LONG).show();
+                    adapter.notifyDataSetChanged();
                 }
-                adapter.notifyDataSetChanged();
                 return true;
             }
         });
@@ -323,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<File> dictionaries = getDictionaries();
                 boolean searchSuccess = false;
 //                Log.i("FileInfo", "the length of the dictionary list is " + dictionaries.size());
+
                 for (File dictionary : dictionaries) {
                     if (dictionary.exists()) {
 //                        Log.i("FileInfo", "the absolute path of the parent directory is " + getExternalFilesDir(null).getAbsolutePath());
@@ -369,7 +372,11 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra(DICTIONARIES, types.get(query));
                     searchView.getContext().startActivity(intent);
                 } else {
-                    Toast.makeText(searchView.getContext(), "query cannot be found in all dictionaries", Toast.LENGTH_SHORT).show();
+                    if (dictionaries.size() == 0) {
+                        Toast.makeText(searchView.getContext(), "there is no mdx file in the APP folder", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(searchView.getContext(), "query cannot be found in all dictionaries", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 return false;
             }
