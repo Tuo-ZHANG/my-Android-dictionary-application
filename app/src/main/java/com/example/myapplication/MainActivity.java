@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
@@ -25,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("LifecycleInfo", "onCreate called");
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -72,12 +72,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-//        Log.i("lifecycle", "onRestart: ");
+        Log.i("LifecycleInfo", "onRestart called");
+        Log.i("MethodInfo ", "entries size at onRestart " + entries.size());
 
 //        Log.i("FileInfo", "the size of the dictionary directories is " + dictionaryDirectories.size());
 
 //        Log.i("FileInfo", "the size of the entries is " + entries.size());
-
         adapter.setEntries(entries);
     }
 
@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     FileOutputStream fos = new FileOutputStream(htmlPage);
                     fos.write(definition.getBytes());
+//                    fos.flush();
                     fos.close();
 
 //                    Toast.makeText(this, "entry exists in " + dict, Toast.LENGTH_LONG).show();
@@ -217,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
+        Log.i("MethodInfo", "setUpRecyclerView called");
         adapter = new EntriesRecViewAdapter(this);
         adapter.setEntries(entries);
         entriesRecView.setAdapter(adapter);
@@ -290,6 +292,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 // Do something when collapsed
+                buttonDeleteHistory.setVisible(true);
+                buttonDeleteLocalHtmls.setVisible(true);
+                buttonDeleteLastQuery.setVisible(true);
                 return true;  // Return true to collapse action view
             }
 
@@ -300,9 +305,15 @@ public class MainActivity extends AppCompatActivity {
                 //get input method
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+
+                buttonDeleteHistory.setVisible(false);
+                buttonDeleteLocalHtmls.setVisible(false);
+                buttonDeleteLastQuery.setVisible(false);
                 return true;  // Return true to expand action view
             }
         });
+
+
 
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
@@ -315,6 +326,7 @@ public class MainActivity extends AppCompatActivity {
         View v = searchView.findViewById(searchPlateId);
         v.setBackgroundColor(Color.TRANSPARENT);
 
+
         searchView.setQueryHint("Type words in to search");
 //        searchView.clearFocus();
 
@@ -323,6 +335,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                Log.i("MethodInfo", "ononQueryTextSubmit called");
 //                Toast.makeText(getApplicationContext(), "search " + query + " in the dictionaries", Toast.LENGTH_LONG).show();
                 ArrayList<File> dictionaries = getDictionaries();
                 boolean searchSuccess = false;
@@ -352,8 +365,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (searchSuccess) {
 //                    Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
-
                     fillEntries(dictionaryDirectories);
+                    Log.i("MethodInfo", "fillEntries called");
 //                    Log.i("FileInfo", "the length of the entries is " + entries.size());
 
                     EntryInformationModel entryInformationModel;

@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_search"
         android:title="@string/search"
         app:actionLayout="@layout/action_view"
-        app:showAsAction="ifRoom|collapseActionView" />
+        app:showAsAction="always|collapseActionView" />
     <item
         android:id="@+id/clear_query_history"
         android:title="@string/clear_query_history"

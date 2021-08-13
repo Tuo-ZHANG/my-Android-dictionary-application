@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,10 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
 
     private ArrayList<Entry> entries = new ArrayList<>();
     private ArrayList<Entry> entriesFull;
-    private Context mContext;
+    private final Context context;
 
-    public EntriesRecViewAdapter(Context mContext) {
-        this.mContext = mContext;
+    public EntriesRecViewAdapter(Context context) {
+        this.context = context;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -54,7 +55,7 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
         holder.placeholder.setText("");
         holder.queryHistory.setText("");
 
-        DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
+        DatabaseHelper databaseHelper = new DatabaseHelper(context);
         int quriedTimes = databaseHelper.returnQuriedTimes(entries.get(position).getEntry());
         if (quriedTimes > 0) {
             holder.placeholder.setText(R.string.quried);
@@ -87,10 +88,10 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
                     }
                 }
                 //send entry and corresponding dictionary to HtmlsRecViewActivity
-                Intent intent = new Intent(mContext, HtmlsRecViewActivity.class);
+                Intent intent = new Intent(context, HtmlsRecViewActivity.class);
                 intent.putExtra(ENTRY, entries.get(position).getEntry());
                 intent.putExtra(DICTIONARIES, entries.get(position).getDictionary());
-                mContext.startActivity(intent);
+                context.startActivity(intent);
             }
         });
     }
@@ -133,8 +134,11 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
+            Log.i("FileInfo", "entries size at filter " + entries.size());
             entries.clear();
+            Log.i("FileInfo", "entries size at filter " + entries.size());
             entries.addAll((ArrayList) results.values);
+            Log.i("FileInfo", "entries size at filter " + entries.size());
             notifyDataSetChanged();
         }
     };

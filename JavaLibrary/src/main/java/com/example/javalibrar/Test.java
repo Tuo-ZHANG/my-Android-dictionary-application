@@ -1,5 +1,8 @@
 package com.example.javalibrar;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 public class Test {
     public static void main(String[] args) {
 //        GetFileName.run();
@@ -13,6 +16,7 @@ public class Test {
 //        System.out.println(System.getProperty("java.library.path"));
         String string = "s.css";
         System.out.println(string.substring(string.length() - 4));
+        SortedMap<Integer, String> map_head = new TreeMap<Integer, String>();
     }
 
 

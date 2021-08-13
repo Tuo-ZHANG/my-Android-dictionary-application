@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
@@ -14,13 +15,18 @@ import android.util.Log;
 import android.view.Menu;
 
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-public class HtmlsRecViewActivity extends MainActivity {
+import static com.example.myapplication.MainActivity.DICTIONARIES;
+import static com.example.myapplication.MainActivity.ENTRY;
+
+public class HtmlsRecViewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("MethodInfo", "onCreate of HtmlsRecViewActivity called");
         setContentView(R.layout.activity_htmls_rec_view);
         RecyclerView htmlsRecView = findViewById(R.id.htmls_rec_view);
 
