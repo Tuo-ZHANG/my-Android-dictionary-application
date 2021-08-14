@@ -134,11 +134,11 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            Log.i("FileInfo", "entries size at filter " + entries.size());
+//            Log.i("FieldInfo", "entries size at filter " + entries.size());
             entries.clear();
-            Log.i("FileInfo", "entries size at filter " + entries.size());
+//            Log.i("FieldInfo", "entries size at filter " + entries.size());
             entries.addAll((ArrayList) results.values);
-            Log.i("FileInfo", "entries size at filter " + entries.size());
+//            Log.i("FieldInfo", "entries size at filter " + entries.size());
             notifyDataSetChanged();
         }
     };

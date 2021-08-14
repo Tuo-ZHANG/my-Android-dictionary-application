@@ -32,12 +32,16 @@ import java.util.TreeMap;
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Entry> entries;
+    private ArrayList<Entry> entriesBackup;
     public static final String ENTRY = "entry";
     public static final String DICTIONARIES = "dictionaries";
     private EntriesRecViewAdapter adapter;
     private TreeMap<String, String> types = new TreeMap<>();
     RecyclerView entriesRecView;
     ArrayList<File> dictionaryDirectories;
+    SearchView searchView;
+    private static String query;
+
 //    private int EXTERNAL_STORAGE_PERMISSION_CODE = 1;
 
     // Used to load the 'native-lib' library on application startup.
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("LifecycleInfo", "onCreate called");
+//        Log.i("LifecycleInfo", "onCreate called");
 
         setContentView(R.layout.activity_main);
 
@@ -67,18 +71,31 @@ public class MainActivity extends AppCompatActivity {
 //        Log.i("FileInfo", "the length of the entries is " + entries.size());
 
         setUpRecyclerView();
+//        Log.i("FieldInfo", "the types size at setUpRecyclerView " + types.size());
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.i("LifecycleInfo", "onRestart called");
-        Log.i("MethodInfo ", "entries size at onRestart " + entries.size());
-
+//        Log.i("LifecycleInfo", "onRestart called");
+//        Log.i("FieldInfo ", "entries size at onRestart " + entries.size());
+//        Log.i("FieldInfo ", "entriesBackup size at onRestart " + entriesBackup.size());
+        searchView.setQuery("", false);
+//        Log.i("FieldInfo", "entries size at setQuery " + entries.size());
 //        Log.i("FileInfo", "the size of the dictionary directories is " + dictionaryDirectories.size());
+//        fillEntries(dictionaryDirectories);
+//        Log.i("FieldInfo", "the size of the entries at fillEntries is " + entries.size());
 
-//        Log.i("FileInfo", "the size of the entries is " + entries.size());
+        entries = entriesBackup;
+
+//        Log.i("FieldInfo", "query is " + query);
+        int position = types.headMap(query).size();
+        entries.add(position, new Entry(query, types.get(query)));
+//        Log.i("FieldInfo", "the size of the entries is " + entries.size());
+
+        adapter = new EntriesRecViewAdapter(this);
         adapter.setEntries(entries);
+        entriesRecView.setAdapter(adapter);
     }
 
     public native String entryPoint(String argument1, String argument2);
@@ -218,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-        Log.i("MethodInfo", "setUpRecyclerView called");
+//        Log.i("MethodInfo", "setUpRecyclerView called");
         adapter = new EntriesRecViewAdapter(this);
         adapter.setEntries(entries);
         entriesRecView.setAdapter(adapter);
@@ -278,9 +295,13 @@ public class MainActivity extends AppCompatActivity {
 
                     databaseHelper.deleteLastRow();
 
-                    types.clear();
-                    fillEntries(dictionaryDirectories);
+                    int position = types.headMap(query).size();
+                    types.remove(query);
+                    entries.remove(position);
+//                    Log.i("FieldInfo", "entries size at headmap method " + entries.size());
+                    adapter = new EntriesRecViewAdapter(MainActivity.this);
                     adapter.setEntries(entries);
+                    entriesRecView.setAdapter(adapter);
                 }
                 return true;
             }
@@ -288,6 +309,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
@@ -295,6 +320,8 @@ public class MainActivity extends AppCompatActivity {
                 buttonDeleteHistory.setVisible(true);
                 buttonDeleteLocalHtmls.setVisible(true);
                 buttonDeleteLastQuery.setVisible(true);
+//                Log.i("FieldInfo ", "entries size at onMenuItemActionCollapse " + entries.size());
+                searchView.setQuery("", false);
                 return true;  // Return true to collapse action view
             }
 
@@ -309,14 +336,15 @@ public class MainActivity extends AppCompatActivity {
                 buttonDeleteHistory.setVisible(false);
                 buttonDeleteLocalHtmls.setVisible(false);
                 buttonDeleteLastQuery.setVisible(false);
+
+                entriesBackup = new ArrayList<>();
+                for (Entry e : entries) {
+                    entriesBackup.add(new Entry(e.getEntry(), e.getDictionary()));
+                }
+
                 return true;  // Return true to expand action view
             }
         });
-
-
-
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setMaxWidth(Integer.MAX_VALUE);
 
         int searchPlateId =
                 searchView.
@@ -332,10 +360,12 @@ public class MainActivity extends AppCompatActivity {
 
 //        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {;
+
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.i("MethodInfo", "ononQueryTextSubmit called");
+//                Log.i("MethodInfo", "ononQueryTextSubmit called");
+
 //                Toast.makeText(getApplicationContext(), "search " + query + " in the dictionaries", Toast.LENGTH_LONG).show();
                 ArrayList<File> dictionaries = getDictionaries();
                 boolean searchSuccess = false;
@@ -350,9 +380,16 @@ public class MainActivity extends AppCompatActivity {
 //                      webView.loadData(queryReturnedValue, "text/html", null);
                         Log.i("length", String.valueOf(queryReturnedValue.length()));
                         if (queryReturnedValue.length() != 0) {
+                            if (types.containsKey(query)) {
+                                //create string which contains all the dictionaries
+                                types.put(query, types.get(query) + "," + dictionary.getName().substring(0, dictionary.getName().length() - 4));
+                            } else {
+                                types.put(query, dictionary.getName().substring(0, dictionary.getName().length() - 4));
+                            }
                             writeFile(dictionary.getName(), query, queryReturnedValue);
                             if (!searchSuccess) {
                                 searchSuccess = true;
+                                MainActivity.query = query;
                             }
                         } else {
 //                            Toast.makeText(getApplicationContext(), "entry does not exist in " + dictionary.getName(), Toast.LENGTH_LONG).show();
@@ -365,9 +402,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (searchSuccess) {
 //                    Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
-                    fillEntries(dictionaryDirectories);
-                    Log.i("MethodInfo", "fillEntries called");
-//                    Log.i("FileInfo", "the length of the entries is " + entries.size());
+
+//                    Log.i("FieldInfo", String.valueOf(entries.size()));
+//                    Log.i("FieldInfo", String.valueOf(types.size()));
 
                     EntryInformationModel entryInformationModel;
                     //the ID one inputs here doesn't matter as it is never accessed later
@@ -380,11 +417,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-//                    adapter.setEntries(entries);
-
                     Intent intent = new Intent(searchView.getContext(), HtmlsRecViewActivity.class);
                     intent.putExtra(ENTRY, query);
                     intent.putExtra(DICTIONARIES, types.get(query));
+//                    Log.i("MethodInfo ", String.valueOf(types.get(query)));
                     searchView.getContext().startActivity(intent);
                 } else {
                     if (dictionaries.size() == 0) {

@@ -26,7 +26,7 @@ public class HtmlsRecViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("MethodInfo", "onCreate of HtmlsRecViewActivity called");
+//        Log.i("MethodInfo", "onCreate of HtmlsRecViewActivity called");
         setContentView(R.layout.activity_htmls_rec_view);
         RecyclerView htmlsRecView = findViewById(R.id.htmls_rec_view);
 
