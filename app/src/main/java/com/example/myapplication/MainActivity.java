@@ -78,24 +78,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
 //        Log.i("LifecycleInfo", "onRestart called");
-//        Log.i("FieldInfo ", "entries size at onRestart " + entries.size());
-//        Log.i("FieldInfo ", "entriesBackup size at onRestart " + entriesBackup.size());
-        searchView.setQuery("", false);
-//        Log.i("FieldInfo", "entries size at setQuery " + entries.size());
-//        Log.i("FileInfo", "the size of the dictionary directories is " + dictionaryDirectories.size());
-//        fillEntries(dictionaryDirectories);
-//        Log.i("FieldInfo", "the size of the entries at fillEntries is " + entries.size());
 
-        entries = entriesBackup;
+        if (query != null) {
+//            Log.i("FieldInfo ", "entries size at onRestart " + entries.size());
+//            Log.i("FieldInfo ", "entriesBackup size at onRestart " + entriesBackup.size());
+            searchView.setQuery("", false);
+//            Log.i("FieldInfo", "entries size at setQuery " + entries.size());
+//          Log.i("FileInfo", "the size of the dictionary directories is " + dictionaryDirectories.size());
+            entries = entriesBackup;
 
 //        Log.i("FieldInfo", "query is " + query);
-        int position = types.headMap(query).size();
-        entries.add(position, new Entry(query, types.get(query)));
+            int position = types.headMap(query).size();
+            entries.add(position, new Entry(query, types.get(query)));
 //        Log.i("FieldInfo", "the size of the entries is " + entries.size());
 
-        adapter = new EntriesRecViewAdapter(this);
-        adapter.setEntries(entries);
-        entriesRecView.setAdapter(adapter);
+            adapter = new EntriesRecViewAdapter(this);
+            adapter.setEntries(entries);
+            entriesRecView.setAdapter(adapter);
+            query = null;
+        }
     }
 
     public native String entryPoint(String argument1, String argument2);
@@ -284,12 +285,9 @@ public class MainActivity extends AppCompatActivity {
                     String query = databaseHelper.getLastQuery();
 
                     for (File dictionaryDirectory : dictionaryDirectories) {
-                        String[] files = dictionaryDirectory.list();
-                        for (String s : files) {
-                            if (s.startsWith(query)) {
-                                File file = new File(dictionaryDirectory, s);
-                                file.delete();
-                            }
+                        if (types.get(query).contains(dictionaryDirectory.getName())) {
+                            File file = new File(dictionaryDirectory, query + ".html");
+                            file.delete();
                         }
                     }
 
