@@ -84,19 +84,22 @@ public class MainActivity extends AppCompatActivity {
 //            Log.i("FieldInfo ", "entriesBackup size at onRestart " + entriesBackup.size());
             searchView.setQuery("", false);
 //            Log.i("FieldInfo", "entries size at setQuery " + entries.size());
-//          Log.i("FileInfo", "the size of the dictionary directories is " + dictionaryDirectories.size());
-            entries = entriesBackup;
+//            Log.i("FileInfo", "the size of the dictionary directories is " + dictionaryDirectories.size());
+            entries = (ArrayList<Entry>) entriesBackup.clone();
+//            Log.i("FieldInfo", "the size of the entries after copying from backup is " + entries.size());
 
-//        Log.i("FieldInfo", "query is " + query);
+//            Log.i("FieldInfo", "query is " + query);
             int position = types.headMap(query).size();
             entries.add(position, new Entry(query, types.get(query)));
-//        Log.i("FieldInfo", "the size of the entries is " + entries.size());
+            entriesBackup.add(position, new Entry(query, types.get(query)));
+//            Log.i("FieldInfo", "the size of the backup entries is " + entriesBackup.size());
 
             adapter = new EntriesRecViewAdapter(this);
             adapter.setEntries(entries);
             entriesRecView.setAdapter(adapter);
             query = null;
         }
+        adapter.notifyDataSetChanged();
     }
 
     public native String entryPoint(String argument1, String argument2);
@@ -238,9 +241,13 @@ public class MainActivity extends AppCompatActivity {
     private void setUpRecyclerView() {
 //        Log.i("MethodInfo", "setUpRecyclerView called");
         adapter = new EntriesRecViewAdapter(this);
+//        Log.i("MethodInfo", "first step");
         adapter.setEntries(entries);
+//        Log.i("MethodInfo", "second step");
         entriesRecView.setAdapter(adapter);
+//        Log.i("MethodInfo", "third step");
         entriesRecView.setLayoutManager(new LinearLayoutManager(this));
+//        Log.i("MethodInfo", "fourth step");
     }
 
     @Override
@@ -335,10 +342,7 @@ public class MainActivity extends AppCompatActivity {
                 buttonDeleteLocalHtmls.setVisible(false);
                 buttonDeleteLastQuery.setVisible(false);
 
-                entriesBackup = new ArrayList<>();
-                for (Entry e : entries) {
-                    entriesBackup.add(new Entry(e.getEntry(), e.getDictionary()));
-                }
+                entriesBackup = (ArrayList<Entry>) entries.clone();
 
                 return true;  // Return true to expand action view
             }

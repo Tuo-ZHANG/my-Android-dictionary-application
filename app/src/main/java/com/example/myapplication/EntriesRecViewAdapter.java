@@ -51,6 +51,7 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+//        Log.i("MethodInfo", "onBindViewHolder called");
         holder.txtEntry.setText(entries.get(position).getEntry());
         holder.placeholder.setText("");
         holder.queryHistory.setText("");

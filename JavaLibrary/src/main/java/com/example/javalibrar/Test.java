@@ -20,11 +20,16 @@ public class Test {
 //        String string = "s.css";
 //        System.out.println(string.substring(string.length() - 4));
 //        SortedMap<Integer, String> map_head = new TreeMap<Integer, String>();
-        int a = 3;
-        int b = a;
-        a = 4;
-        System.out.println(a);
-        System.out.println(b);
+        ArrayList<Entry> entries = new ArrayList<>();
+        ArrayList<Entry> entriesBackup;
+        entries.add(new Entry("arsenal", "colins"));
+        entriesBackup = (ArrayList<Entry>) entries.clone();
+        entries.add(new Entry("deli", "colins"));
+        System.out.println(entries);
+        System.out.println(entriesBackup);
+        entries.clear();
+        System.out.println(entries);
+        System.out.println(entriesBackup);
     }
 
 
