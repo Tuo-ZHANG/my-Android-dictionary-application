@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -135,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
         if (isExternalStorageWritable()) {
             File dictDirectory = new File(getExternalFilesDir(null).getAbsolutePath() + "/" + dict.substring(0, dict.length() - 4));
             if (!dictDirectory.exists()) {
-                boolean wasSuccessful = dictDirectory.mkdir();;
+                boolean wasSuccessful = dictDirectory.mkdir();
+                ;
                 if (!wasSuccessful) {
 //                    Log.i("FileInfo", "directory creation is not successful");
                 }
@@ -176,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<File> getDictionaryDirectories() {
-        String [] fileList = getExternalFilesDir(null).list();
+        String[] fileList = getExternalFilesDir(null).list();
         ArrayList<File> dictionaryDirectories = new ArrayList<File>();
 //        Log.i("FileInfo", "the file list is " + Arrays.toString(fileList));
         for (String file : fileList) {
@@ -189,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<File> getDictionaries() {
-        String [] fileList = getExternalFilesDir(null).list();
+        String[] fileList = getExternalFilesDir(null).list();
         ArrayList<File> dictionaries = new ArrayList<File>();
 //        Log.i("FileInfo", "the file list is " + Arrays.toString(fileList));
         for (String file : fileList) {
@@ -256,63 +258,8 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.dict_menu, menu);
 
         MenuItem buttonDeleteHistory = menu.findItem(R.id.clear_query_history);
-        buttonDeleteHistory.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-                if (!databaseHelper.isEmpty()) {
-                    databaseHelper.deleteRecords();
-//                    Toast.makeText(getApplicationContext(), "the query history is cleared", Toast.LENGTH_LONG).show();
-                    adapter.notifyDataSetChanged();
-                }
-                return true;
-            }
-        });
-
         MenuItem buttonDeleteLocalHtmls = menu.findItem(R.id.clear_local_htmls);
-        buttonDeleteLocalHtmls.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                deleteLocalHtmls();
-//                Toast.makeText(getApplicationContext(), "local htmls are all deleted", Toast.LENGTH_LONG).show();
-
-                entries.clear();
-                adapter.notifyDataSetChanged();
-                return true;
-            }
-        });
-
         MenuItem buttonDeleteLastQuery = menu.findItem(R.id.delete_last_query);
-        buttonDeleteLastQuery.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-
-                if (!databaseHelper.isEmpty()) {
-                    String query = databaseHelper.getLastQuery();
-
-                    for (File dictionaryDirectory : dictionaryDirectories) {
-                        if (types.get(query).contains(dictionaryDirectory.getName())) {
-                            File file = new File(dictionaryDirectory, query + ".html");
-                            file.delete();
-                        }
-                    }
-
-                    databaseHelper.deleteLastRow();
-
-                    int position = types.headMap(query).size();
-                    types.remove(query);
-                    entries.remove(position);
-//                    Log.i("FieldInfo", "entries size at headmap method " + entries.size());
-                    adapter = new EntriesRecViewAdapter(MainActivity.this);
-                    adapter.setEntries(entries);
-                    entriesRecView.setAdapter(adapter);
-                }
-                return true;
-            }
-        });
-
-
         MenuItem searchItem = menu.findItem(R.id.action_search);
 
         searchView = (SearchView) searchItem.getActionView();
@@ -348,22 +295,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        int searchPlateId =
-                searchView.
+        int searchPlateId = searchView.
                 getContext().
                 getResources().
                 getIdentifier("android:id/search_plate", null, null);
         View v = searchView.findViewById(searchPlateId);
         v.setBackgroundColor(Color.TRANSPARENT);
 
-
         searchView.setQueryHint("Type words in to search");
 //        searchView.clearFocus();
 
 //        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {;
-
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 //                Log.i("MethodInfo", "ononQueryTextSubmit called");
@@ -441,5 +385,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.clear_query_history) {
+            DatabaseHelper databaseHelper = new DatabaseHelper(this);
+            if (!databaseHelper.isEmpty()) {
+                databaseHelper.deleteRecords();
+                Toast.makeText(this, "the query history is cleared", Toast.LENGTH_LONG).show();
+                adapter.notifyDataSetChanged();
+            }
+            return true;
+        }
+
+        if (id == R.id.clear_local_htmls) {
+            deleteLocalHtmls();
+            Toast.makeText(this, "local htmls are all deleted", Toast.LENGTH_LONG).show();
+
+            entries.clear();
+            adapter.notifyDataSetChanged();
+            return true;
+        }
+
+        if (id == R.id.delete_last_query) {
+            DatabaseHelper databaseHelper = new DatabaseHelper(this);
+
+            if (!databaseHelper.isEmpty()) {
+                String query = databaseHelper.getLastQuery();
+
+                for (File dictionaryDirectory : dictionaryDirectories) {
+                    if (types.get(query).contains(dictionaryDirectory.getName())) {
+                        File file = new File(dictionaryDirectory, query + ".html");
+                        file.delete();
+                    }
+                }
+
+                databaseHelper.deleteLastRow();
+
+                int position = types.headMap(query).size();
+                types.remove(query);
+                entries.remove(position);
+//                Log.i("FieldInfo", "entries size at headmap method " + entries.size());
+                adapter = new EntriesRecViewAdapter(MainActivity.this);
+                adapter.setEntries(entries);
+                entriesRecView.setAdapter(adapter);
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
