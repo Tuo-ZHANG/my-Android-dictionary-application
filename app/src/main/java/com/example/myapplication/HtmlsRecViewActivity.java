@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,8 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import static com.example.myapplication.MainActivity.DICTIONARIES;
@@ -32,8 +29,8 @@ public class HtmlsRecViewActivity extends AppCompatActivity {
 
         HtmlsRecViewAdapter adapterLocal = new HtmlsRecViewAdapter(this);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
 

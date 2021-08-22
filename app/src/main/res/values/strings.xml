@@ -9,4 +9,7 @@
     <string name="twice">twice</string>
     <string name="clear_local_htmls">clear local htmls</string>
     <string name="delete_last_query">delete last query</string>
+    <string name="dictionary_inventory">dictionary inventory</string>
+    <string name="view_mode">view mode</string>
+    <string name="by_query_frequency">by query frequency</string>
 </resources>

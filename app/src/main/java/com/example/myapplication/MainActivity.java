@@ -9,14 +9,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         entriesRecView = findViewById(R.id.entriesRecView);
 
@@ -67,7 +68,9 @@ public class MainActivity extends AppCompatActivity {
 //        Log.i("FileInfo", "the file list is " + dictionaryDirectories.toString());
 //        Log.i("FileInfo", "the length of the dictionary directories is " + dictionaryDirectories.size());
 
-        fillEntries(dictionaryDirectories);
+//        Log.i("FieldInfo", String.valueOf(types.isEmpty()));
+
+        fillEntriesByAlphabet(dictionaryDirectories);
 //        Log.i("FileInfo", "the file list is " + entries.toString());
 //        Log.i("FileInfo", "the length of the entries is " + entries.size());
 
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-//        Log.i("LifecycleInfo", "onRestart called");
+        Log.i("LifecycleInfo", "onRestart called");
 
         if (query != null) {
 //            Log.i("FieldInfo ", "entries size at onRestart " + entries.size());
@@ -100,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
             entriesRecView.setAdapter(adapter);
             query = null;
         }
-        adapter.notifyDataSetChanged();
     }
 
     public native String entryPoint(String argument1, String argument2);
@@ -203,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         return dictionaries;
     }
 
-    private void fillEntries(ArrayList<File> dictionaryDirectories) {
+    private void fillEntriesByAlphabet(ArrayList<File> dictionaryDirectories) {
         entries = new ArrayList<>();
         for (File dictionaryDirectory : dictionaryDirectories) {
             String[] files = dictionaryDirectory.list();
@@ -235,8 +237,38 @@ public class MainActivity extends AppCompatActivity {
             i++;
         }
         // set entries
-        for (Object[] objects : array) {
-            entries.add(new Entry(objects[0].toString(), objects[1].toString()));
+        for (Object[] object : array) {
+            entries.add(new Entry(object[0].toString(), object[1].toString()));
+        }
+    }
+
+    private void fillEntriesByQueryFrequency(ArrayList<File> dictionaryDirectories) {
+        if (!types.isEmpty()) {
+            TreeMap<String, String> mapByQueryFrequency = new TreeMap<>();
+            for (Map.Entry<String, String> entry : types.entrySet()) {
+                DatabaseHelper databaseHelper = new DatabaseHelper(this);
+                int quriedTimes = databaseHelper.returnQuriedTimes(entry.getKey());
+                mapByQueryFrequency.put(quriedTimes + "," + entry.getKey(), entry.getValue());
+            }
+            // convert the treemap to 2 dimension array
+            Object[][] array = new Object[mapByQueryFrequency.size()][2];
+            Set setEntries = mapByQueryFrequency.entrySet();
+
+            Iterator entriesIterator = setEntries.iterator();
+            int i = 0;
+            while (entriesIterator.hasNext()) {
+
+                Map.Entry mapping = (Map.Entry) entriesIterator.next();
+
+                array[i][0] = mapping.getKey();
+                array[i][1] = mapping.getValue();
+
+                i++;
+            }
+            // set entries
+            for (Object[] object : array) {
+                entries.add(new Entry(object[0].toString(), object[1].toString()));
+            }
         }
     }
 
@@ -257,6 +289,17 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.dict_menu, menu);
 
+        MenuItem dictInventory = menu.findItem(R.id.dict_inventory);
+        SubMenu dictInventorySubMenu = dictInventory.getSubMenu();
+//        dictInventorySubMenu.clearHeader();
+        ArrayList<File> dictionaries = getDictionaries();
+        for (File dictionary:dictionaries) {
+            dictInventorySubMenu.add(dictionary.getName().substring(0, dictionary.getName().length() - 4));
+        }
+        
+        MenuItem viewMode = menu.findItem(R.id.view_mode);
+        MenuItem buttonViewByQueryFrequency = menu.findItem(R.id.by_query_frequency);
+        
         MenuItem buttonDeleteHistory = menu.findItem(R.id.clear_query_history);
         MenuItem buttonDeleteLocalHtmls = menu.findItem(R.id.clear_local_htmls);
         MenuItem buttonDeleteLastQuery = menu.findItem(R.id.delete_last_query);
@@ -269,6 +312,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 // Do something when collapsed
+                dictInventory.setVisible(true);
+                viewMode.setVisible(true);
                 buttonDeleteHistory.setVisible(true);
                 buttonDeleteLocalHtmls.setVisible(true);
                 buttonDeleteLastQuery.setVisible(true);
@@ -285,6 +330,8 @@ public class MainActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 
+                dictInventory.setVisible(false);
+                viewMode.setVisible(false);
                 buttonDeleteHistory.setVisible(false);
                 buttonDeleteLocalHtmls.setVisible(false);
                 buttonDeleteLastQuery.setVisible(false);
@@ -356,11 +403,14 @@ public class MainActivity extends AppCompatActivity {
                     //the ID one inputs here doesn't matter as it is never accessed later
                     DatabaseHelper databaseHelper = new DatabaseHelper(searchView.getContext());
                     if (!databaseHelper.checkIfRecordExists(query)) {
+                        // the id here does not matter as it is never accessed later
                         entryInformationModel = new EntryInformationModel(-1, query, 1, true);
                         boolean success = databaseHelper.addOne(entryInformationModel);
                         if (success) {
                             Toast.makeText(searchView.getContext(), query + " queried", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(searchView.getContext(), query + " already exists in the database but not in local cache", Toast.LENGTH_SHORT).show();
                     }
 
                     Intent intent = new Intent(searchView.getContext(), HtmlsRecViewActivity.class);
@@ -398,43 +448,43 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
             return true;
-        }
-
-        if (id == R.id.clear_local_htmls) {
+        } else if (id == R.id.clear_local_htmls) {
             deleteLocalHtmls();
             Toast.makeText(this, "local htmls are all deleted", Toast.LENGTH_LONG).show();
 
             entries.clear();
             adapter.notifyDataSetChanged();
             return true;
-        }
-
-        if (id == R.id.delete_last_query) {
+        } else if (id == R.id.delete_last_query) {
             DatabaseHelper databaseHelper = new DatabaseHelper(this);
 
             if (!databaseHelper.isEmpty()) {
                 String query = databaseHelper.getLastQuery();
-
-                for (File dictionaryDirectory : dictionaryDirectories) {
-                    if (types.get(query).contains(dictionaryDirectory.getName())) {
-                        File file = new File(dictionaryDirectory, query + ".html");
-                        file.delete();
+                if (types.containsKey(query)) {
+                    for (File dictionaryDirectory : dictionaryDirectories) {
+                        if (types.get(query).contains(dictionaryDirectory.getName())) {
+                            File file = new File(dictionaryDirectory, query + ".html");
+                            file.delete();
+                        }
                     }
+
+                    databaseHelper.deleteLastRow();
+
+                    int position = types.headMap(query).size();
+                    types.remove(query);
+                    entries.remove(position);
+//                    Log.i("FieldInfo", "entries size at headmap method " + entries.size());
+                    adapter = new EntriesRecViewAdapter(MainActivity.this);
+                    adapter.setEntries(entries);
+                    entriesRecView.setAdapter(adapter);
                 }
-
-                databaseHelper.deleteLastRow();
-
-                int position = types.headMap(query).size();
-                types.remove(query);
-                entries.remove(position);
-//                Log.i("FieldInfo", "entries size at headmap method " + entries.size());
-                adapter = new EntriesRecViewAdapter(MainActivity.this);
-                adapter.setEntries(entries);
-                entriesRecView.setAdapter(adapter);
             }
             return true;
+        } else if (id == R.id.by_query_frequency) {
+            Toast.makeText(MainActivity.this, "item clicked", Toast.LENGTH_LONG).show();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }

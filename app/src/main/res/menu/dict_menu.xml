@@ -8,6 +8,22 @@
         app:actionLayout="@layout/action_view"
         app:showAsAction="always|collapseActionView" />
     <item
+        android:id="@+id/dict_inventory"
+        android:title="@string/dictionary_inventory"
+        app:showAsAction="never">
+        <menu />
+    </item>
+    <item
+        android:id="@+id/view_mode"
+        android:title="@string/view_mode"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/by_query_frequency"
+                android:title="@string/by_query_frequency" />
+        </menu>
+    </item>
+    <item
         android:id="@+id/clear_query_history"
         android:title="@string/clear_query_history"
         app:showAsAction="never" />
