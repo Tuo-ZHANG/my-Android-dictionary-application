@@ -10,6 +10,10 @@ An Android dictionary application. I have used the [mdict-jni-query-library](htt
 - entries recycler view 
 
   ![alt text](https://github.com/Tuo-ZHANG/my-Android-dictionary-application/blob/master/Screenshot_1625774512.png)
+  
+ - utilities
+
+    ![alt text](https://github.com/Tuo-ZHANG/my-Android-dictionary-application/blob/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210823201706.png)
 
 - conjugation of German verbs
 
