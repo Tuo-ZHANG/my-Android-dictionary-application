@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,12 +20,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,12 +80,14 @@ public class MainActivity extends AppCompatActivity {
 
         setUpRecyclerView();
 //        Log.i("FieldInfo", "the types size at setUpRecyclerView " + types.size());
+
+//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXTERNAL_STORAGE_PERMISSION_CODE);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.i("LifecycleInfo", "onRestart called");
+//        Log.i("LifecycleInfo", "onRestart called");
 
         if (query != null) {
 //            Log.i("FieldInfo ", "entries size at onRestart " + entries.size());
@@ -103,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
             entriesRecView.setAdapter(adapter);
             query = null;
         }
+        // the code below takes effect when you use entry in recycler view to jump into HTML pages
+        adapter.notifyDataSetChanged();
     }
 
     public native String entryPoint(String argument1, String argument2);
@@ -139,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
             File dictDirectory = new File(getExternalFilesDir(null).getAbsolutePath() + "/" + dict.substring(0, dict.length() - 4));
             if (!dictDirectory.exists()) {
                 boolean wasSuccessful = dictDirectory.mkdir();
-                ;
                 if (!wasSuccessful) {
 //                    Log.i("FileInfo", "directory creation is not successful");
                 }
@@ -193,13 +200,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<File> getDictionaries() {
-        String[] fileList = getExternalFilesDir(null).list();
+        File[] fileList = getExternalFilesDir(null).listFiles();
         ArrayList<File> dictionaries = new ArrayList<File>();
-//        Log.i("FileInfo", "the file list is " + Arrays.toString(fileList));
-        for (String file : fileList) {
-            File fileObject = new File(getExternalFilesDir(null), file);
-            if (!fileObject.isDirectory()) {
-                dictionaries.add(fileObject);
+        for (File file : fileList) {
+            if (file.getName().endsWith(".mdx")) {
+                dictionaries.add(file);
             }
         }
         return dictionaries;

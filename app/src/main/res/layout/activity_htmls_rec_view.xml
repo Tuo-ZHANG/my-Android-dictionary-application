@@ -6,14 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".HtmlsRecViewActivity">
 
-<!--    <include-->
-<!--        android:id="@+id/toolbar"-->
-<!--        layout="@layout/toolbar" />-->
+    <!--    <include-->
+    <!--        android:id="@+id/toolbar"-->
+    <!--        layout="@layout/toolbar" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/htmls_rec_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

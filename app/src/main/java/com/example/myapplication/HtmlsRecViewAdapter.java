@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,6 +12,11 @@ import android.webkit.WebView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class HtmlsRecViewAdapter extends RecyclerView.Adapter<HtmlsRecViewAdapter.ViewHolder> {
@@ -49,10 +55,18 @@ public class HtmlsRecViewAdapter extends RecyclerView.Adapter<HtmlsRecViewAdapte
         holder.html.setWebViewClient(new MyWebViewClient());
 
         WebSettings settings = holder.html.getSettings();
-        settings.setDefaultTextEncodingName("utf-8");
+        //necessary for reading css
         settings.setAllowFileAccess(true);
+
         String url = mContext.getExternalFilesDir(null).getAbsolutePath() + "/" + items.get(position).getDictionary() + "/" + items.get(position).getEntry() + ".html";
-        holder.html.loadUrl(url);
+//        holder.html.loadUrl(url);
+
+        File file = new File(url);
+        try {
+            holder.html.loadDataWithBaseURL("file://" + mContext.getExternalFilesDir(null).getAbsolutePath() + "/", Files.asCharSource(file, Charsets.UTF_8).read(), "text/html", "utf-8", null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         holder.html.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -65,6 +79,7 @@ public class HtmlsRecViewAdapter extends RecyclerView.Adapter<HtmlsRecViewAdapte
                     case MotionEvent.ACTION_MOVE:
                         newX = event.getX();
                         newY = event.getY();
+                        break;
                 }
                 float movementX = Math.abs(newX - originalX);
                 float movementY = Math.abs(newY- originalY);
