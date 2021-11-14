@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<File> dictionaryDirectories;
     SearchView searchView;
     private static String query;
+    boolean redundantBehavior;
 
 //    private int EXTERNAL_STORAGE_PERMISSION_CODE = 1;
 
@@ -99,10 +100,12 @@ public class MainActivity extends AppCompatActivity {
 //            Log.i("FieldInfo", "the size of the entries after copying from backup is " + entries.size());
 
 //            Log.i("FieldInfo", "query is " + query);
-            int position = types.headMap(query).size();
-            entries.add(position, new Entry(query, types.get(query)));
-            entriesBackup.add(position, new Entry(query, types.get(query)));
+            if (!redundantBehavior) {
+                int position = types.headMap(query).size();
+                entries.add(position, new Entry(query, types.get(query)));
+                entriesBackup.add(position, new Entry(query, types.get(query)));
 //            Log.i("FieldInfo", "the size of the backup entries is " + entriesBackup.size());
+            }
 
             adapter = new EntriesRecViewAdapter(this);
             adapter.setEntries(entries);
@@ -367,6 +370,7 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(getApplicationContext(), "search " + query + " in the dictionaries", Toast.LENGTH_LONG).show();
                 ArrayList<File> dictionaries = getDictionaries();
                 boolean searchSuccess = false;
+                redundantBehavior = false;
 //                Log.i("FileInfo", "the length of the dictionary list is " + dictionaries.size());
 
                 for (File dictionary : dictionaries) {
@@ -376,11 +380,17 @@ public class MainActivity extends AppCompatActivity {
                         // Example of a call to a native method
                         String queryReturnedValue = entryPoint(dictionary.getAbsolutePath(), query);
 //                      webView.loadData(queryReturnedValue, "text/html", null);
-                        Log.i("length", String.valueOf(queryReturnedValue.length()));
+//                        Log.i("length", String.valueOf(queryReturnedValue.length()));
                         if (queryReturnedValue.length() != 0) {
                             if (types.containsKey(query)) {
                                 //create string which contains all the dictionaries
-                                types.put(query, types.get(query) + "," + dictionary.getName().substring(0, dictionary.getName().length() - 4));
+                                if (types.get(query).contains(dictionary.getName().substring(0, dictionary.getName().length() - 4))){
+                                    if (!redundantBehavior) {
+                                        redundantBehavior = true;
+                                    }
+                                } else {
+                                    types.put(query, types.get(query) + "," + dictionary.getName().substring(0, dictionary.getName().length() - 4));
+                                }
                             } else {
                                 types.put(query, dictionary.getName().substring(0, dictionary.getName().length() - 4));
                             }
@@ -415,7 +425,11 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(searchView.getContext(), query + " queried", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(searchView.getContext(), query + " already exists in the database but not in local cache", Toast.LENGTH_SHORT).show();
+                        if (redundantBehavior) {
+                            Toast.makeText(searchView.getContext(), "you have used search even though the query is in recycler view", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(searchView.getContext(), query + " already exists in the database but not in local cache", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     Intent intent = new Intent(searchView.getContext(), HtmlsRecViewActivity.class);
