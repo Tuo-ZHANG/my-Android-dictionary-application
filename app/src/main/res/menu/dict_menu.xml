@@ -24,6 +24,10 @@
         </menu>
     </item>
     <item
+        android:id="@+id/download_from_server"
+        android:title="@string/download_from_server"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/clear_query_history"
         android:title="@string/clear_query_history"
         app:showAsAction="never" />

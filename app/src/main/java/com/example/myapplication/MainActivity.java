@@ -2,7 +2,9 @@ package com.example.myapplication;
 
 import android.Manifest;
 import android.app.Activity;
+
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,8 +21,9 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -459,50 +462,84 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.clear_query_history) {
-            DatabaseHelper databaseHelper = new DatabaseHelper(this);
-            if (!databaseHelper.isEmpty()) {
-                databaseHelper.deleteRecords();
-                Toast.makeText(this, "the query history is cleared", Toast.LENGTH_LONG).show();
-                adapter.notifyDataSetChanged();
+
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Alert Dialog");
+        alertDialog.setMessage("are you sure to perform this functionality?");
+        alertDialog.setButton(-2, "cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
             }
+        });
+
+        if (id == R.id.clear_query_history) {
+            alertDialog.setButton(-1, "ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
+                    if (!databaseHelper.isEmpty()) {
+                        databaseHelper.deleteRecords();
+                        Toast.makeText(MainActivity.this, "the query history is cleared", Toast.LENGTH_LONG).show();
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
+
+            alertDialog.show();
             return true;
         } else if (id == R.id.clear_local_htmls) {
-            deleteLocalHtmls();
-            Toast.makeText(this, "local htmls are all deleted", Toast.LENGTH_LONG).show();
+            alertDialog.setButton(-1, "ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    deleteLocalHtmls();
+                    Toast.makeText(MainActivity.this, "local htmls are all deleted", Toast.LENGTH_LONG).show();
 
-            entries.clear();
-            adapter.notifyDataSetChanged();
+                    entries.clear();
+                    adapter.notifyDataSetChanged();
+                }
+            });
+
+            alertDialog.show();
             return true;
         } else if (id == R.id.delete_last_query) {
-            DatabaseHelper databaseHelper = new DatabaseHelper(this);
+            alertDialog.setButton(-1, "ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
+                    if (!databaseHelper.isEmpty()) {
+                        String query = databaseHelper.getLastQuery();
+                        if (types.containsKey(query)) {
+                            for (File dictionaryDirectory : dictionaryDirectories) {
+                                if (types.get(query).contains(dictionaryDirectory.getName())) {
+                                    File file = new File(dictionaryDirectory, query + ".html");
+                                    file.delete();
+                                }
+                            }
 
-            if (!databaseHelper.isEmpty()) {
-                String query = databaseHelper.getLastQuery();
-                if (types.containsKey(query)) {
-                    for (File dictionaryDirectory : dictionaryDirectories) {
-                        if (types.get(query).contains(dictionaryDirectory.getName())) {
-                            File file = new File(dictionaryDirectory, query + ".html");
-                            file.delete();
+                            databaseHelper.deleteLastRow();
+
+                            int position = types.headMap(query).size();
+                            types.remove(query);
+                            entries.remove(position);
+//                            Log.i("FieldInfo", "entries size at headmap method " + entries.size());
+                            adapter = new EntriesRecViewAdapter(MainActivity.this);
+                            adapter.setEntries(entries);
+                            entriesRecView.setAdapter(adapter);
                         }
                     }
-
-                    databaseHelper.deleteLastRow();
-
-                    int position = types.headMap(query).size();
-                    types.remove(query);
-                    entries.remove(position);
-//                    Log.i("FieldInfo", "entries size at headmap method " + entries.size());
-                    adapter = new EntriesRecViewAdapter(MainActivity.this);
-                    adapter.setEntries(entries);
-                    entriesRecView.setAdapter(adapter);
                 }
-            }
+            });
+
+            alertDialog.show();
             return true;
         } else if (id == R.id.by_query_frequency) {
             Toast.makeText(MainActivity.this, "item clicked", Toast.LENGTH_LONG).show();
             return true;
-        } else {
+        } else if (id == R.id.download_from_server) {
+            Toast.makeText(MainActivity.this, "item clicked", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        else {
             return super.onOptionsItemSelected(item);
         }
     }
