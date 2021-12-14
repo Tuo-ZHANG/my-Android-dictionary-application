@@ -536,7 +536,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "item clicked", Toast.LENGTH_LONG).show();
             return true;
         } else if (id == R.id.download_from_server) {
-            Toast.makeText(MainActivity.this, "item clicked", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(MainActivity.this, InventoryRecViewActivity.class);
+            startActivity(intent);
             return true;
         }
         else {

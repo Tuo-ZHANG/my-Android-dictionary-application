@@ -16,6 +16,9 @@
             android:name=".HtmlsRecViewActivity"
             android:label="My Dictionary" />
         <activity
+            android:name=".InventoryRecViewActivity"
+            android:label="My Dictionary" />
+        <activity
             android:name=".MainActivity"
             android:label="My Dictionary">
             <intent-filter>
