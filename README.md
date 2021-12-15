@@ -4,7 +4,7 @@ An Android dictionary application. I have used the [mdict-jni-query-library](htt
 ## Supporting features
 - [x] quering multiple dictionaries at the same time
 - [x] utilities for managing query histories with integration of SQLite 
-- [ ] download dictionary sources from the FastAPI backend
+- [x] download dictionary sources from the FastAPI backend
 - [ ] view query history in order of alphabet, query frequencies or time 
 
 ## Showcase
