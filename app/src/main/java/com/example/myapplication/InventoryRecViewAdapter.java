@@ -19,7 +19,6 @@ public class InventoryRecViewAdapter extends RecyclerView.Adapter<InventoryRecVi
 
     private ArrayList<String> entries = new ArrayList<>();
     private final Context context;
-    DownloadManager downloadManager;
     public InventoryRecViewAdapter(Context context) {
         this.context = context;
     }
@@ -38,21 +37,16 @@ public class InventoryRecViewAdapter extends RecyclerView.Adapter<InventoryRecVi
     @Override
     public InventoryRecViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.entry_dictionary, parent, false);
-        return new InventoryRecViewAdapter.ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull InventoryRecViewAdapter.ViewHolder holder, int position) {
-        holder.dictionary.setText(entries.get(position).substring(0, entries.get(position).length() - 4));
+        ViewHolder holder = new ViewHolder(view);
         holder.dictionary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                Uri uri = Uri.parse("https://mdict-heroku.herokuapp.com/download/" + entries.get(position));
+                DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                Uri uri = Uri.parse("https://mdict-heroku.herokuapp.com/download/" + entries.get(holder.getAdapterPosition()));
                 DownloadManager.Request request = new DownloadManager.Request(uri);
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalFilesDir(context, null, entries.get(position));
-                File file = new File(context.getExternalFilesDir(null), entries.get(position));
+                request.setDestinationInExternalFilesDir(context, null, entries.get(holder.getAdapterPosition()));
+                File file = new File(context.getExternalFilesDir(null), entries.get(holder.getAdapterPosition()));
                 if (file.exists()) {
                     Toast.makeText(context, "the dictionary is already in local storage", Toast.LENGTH_LONG).show();
                 } else {
@@ -60,6 +54,12 @@ public class InventoryRecViewAdapter extends RecyclerView.Adapter<InventoryRecVi
                 }
             }
         });
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull InventoryRecViewAdapter.ViewHolder holder, int position) {
+        holder.dictionary.setText(entries.get(position).substring(0, entries.get(position).length() - 4));
     }
 
     @Override

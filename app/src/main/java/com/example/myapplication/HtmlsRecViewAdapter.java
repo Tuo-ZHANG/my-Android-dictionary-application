@@ -47,27 +47,7 @@ public class HtmlsRecViewAdapter extends RecyclerView.Adapter<HtmlsRecViewAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.html_page, parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.html.setWebViewClient(new MyWebViewClient());
-
-        WebSettings settings = holder.html.getSettings();
-        //necessary for reading css
-        settings.setAllowFileAccess(true);
-
-        String url = mContext.getExternalFilesDir(null).getAbsolutePath() + "/" + items.get(position).getDictionary() + "/" + items.get(position).getEntry() + ".html";
-//        holder.html.loadUrl(url);
-
-        File file = new File(url);
-        try {
-            holder.html.loadDataWithBaseURL("file://" + mContext.getExternalFilesDir(null).getAbsolutePath() + "/", Files.asCharSource(file, Charsets.UTF_8).read(), "text/html", "utf-8", null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        ViewHolder holder = new ViewHolder(view);
         holder.html.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -89,6 +69,26 @@ public class HtmlsRecViewAdapter extends RecyclerView.Adapter<HtmlsRecViewAdapte
                 return false;
             }
         });
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.html.setWebViewClient(new MyWebViewClient());
+
+        WebSettings settings = holder.html.getSettings();
+        //necessary for reading css
+        settings.setAllowFileAccess(true);
+
+        String url = mContext.getExternalFilesDir(null).getAbsolutePath() + "/" + items.get(position).getDictionary() + "/" + items.get(position).getEntry() + ".html";
+//        holder.html.loadUrl(url);
+
+        File file = new File(url);
+        try {
+            holder.html.loadDataWithBaseURL("file://" + mContext.getExternalFilesDir(null).getAbsolutePath() + "/", Files.asCharSource(file, Charsets.UTF_8).read(), "text/html", "utf-8", null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

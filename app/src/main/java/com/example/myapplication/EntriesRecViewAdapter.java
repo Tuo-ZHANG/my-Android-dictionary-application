@@ -23,9 +23,11 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
     private ArrayList<Entry> entries = new ArrayList<>();
     private ArrayList<Entry> entriesFull;
     private final Context context;
+    private DatabaseHelper databaseHelper;
 
     public EntriesRecViewAdapter(Context context) {
         this.context = context;
+        databaseHelper = new DatabaseHelper(context);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -46,7 +48,33 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.entry_card_view, parent, false);
-        return new ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view);
+        viewHolder.txtEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EntryInformationModel entryInformationModel;
+                //the ID one inputs here doesn't matter as it is never accessed later
+                if (!databaseHelper.checkIfRecordExists(entries.get(viewHolder.getAdapterPosition()).getEntry())) {
+                    entryInformationModel = new EntryInformationModel(-1, entries.get(viewHolder.getAdapterPosition()).getEntry(), 1, true);
+                    boolean success = databaseHelper.addOne(entryInformationModel);
+                    if (success) {
+//                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    boolean success = databaseHelper.updateRecord(entries.get(viewHolder.getAdapterPosition()).getEntry());
+                    if (success) {
+//                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried multiple times", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                //send entry and corresponding dictionary to HtmlsRecViewActivity
+                Intent intent = new Intent(context, HtmlsRecViewActivity.class);
+                intent.putExtra(ENTRY, entries.get(viewHolder.getAdapterPosition()).getEntry());
+                intent.putExtra(DICTIONARIES, entries.get(viewHolder.getAdapterPosition()).getDictionary());
+                context.startActivity(intent);
+            }
+        });
+        return viewHolder;
     }
 
     @Override
@@ -56,7 +84,6 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
         holder.placeholder.setText("");
         holder.queryHistory.setText("");
 
-        DatabaseHelper databaseHelper = new DatabaseHelper(context);
         int quriedTimes = databaseHelper.returnQuriedTimes(entries.get(position).getEntry());
         if (quriedTimes > 0) {
             holder.placeholder.setText(R.string.quried);
@@ -69,32 +96,6 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
                 holder.queryHistory.setText(stringDisplayed);
             }
         }
-
-        holder.txtEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EntryInformationModel entryInformationModel;
-                //the ID one inputs here doesn't matter as it is never accessed later
-                if (!databaseHelper.checkIfRecordExists(entries.get(position).getEntry())) {
-                    entryInformationModel = new EntryInformationModel(-1, entries.get(position).getEntry(), 1, true);
-                    boolean success = databaseHelper.addOne(entryInformationModel);
-                    if (success) {
-//                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    boolean success = databaseHelper.updateRecord(entries.get(position).getEntry());
-                    if (success) {
-//                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried multiple times", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                //send entry and corresponding dictionary to HtmlsRecViewActivity
-                Intent intent = new Intent(context, HtmlsRecViewActivity.class);
-                intent.putExtra(ENTRY, entries.get(position).getEntry());
-                intent.putExtra(DICTIONARIES, entries.get(position).getDictionary());
-                context.startActivity(intent);
-            }
-        });
     }
 
     @Override
