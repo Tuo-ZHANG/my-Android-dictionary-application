@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     SearchView searchView;
     private static String query;
     boolean redundantBehavior;
+    AlertDialog alertDialog;
 
 //    private int EXTERNAL_STORAGE_PERMISSION_CODE = 1;
 
@@ -117,6 +118,12 @@ public class MainActivity extends AppCompatActivity {
         }
         // the code below takes effect when you use entry in recycler view to jump into HTML pages
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        alertDialog.dismiss();
     }
 
     public native String entryPoint(String argument1, String argument2);
@@ -463,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Alert Dialog");
         alertDialog.setMessage("are you sure to perform this functionality?");
         alertDialog.setButton(-2, "cancel", new DialogInterface.OnClickListener() {
@@ -502,12 +509,13 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.show();
             return true;
         } else if (id == R.id.delete_last_query) {
-            alertDialog.setButton(-1, "ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
-                    if (!databaseHelper.isEmpty()) {
-                        String query = databaseHelper.getLastQuery();
+            DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
+            if (!databaseHelper.isEmpty()) {
+                String query = databaseHelper.getLastQuery();
+                alertDialog.setMessage("are you sure to delete the query for " + query + "?");
+                alertDialog.setButton(-1, "ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
                         if (types.containsKey(query)) {
                             for (File dictionaryDirectory : dictionaryDirectories) {
                                 if (types.get(query).contains(dictionaryDirectory.getName())) {
@@ -526,9 +534,10 @@ public class MainActivity extends AppCompatActivity {
                             adapter.setEntries(entries);
                             entriesRecView.setAdapter(adapter);
                         }
+
                     }
-                }
-            });
+                });
+            }
 
             alertDialog.show();
             return true;

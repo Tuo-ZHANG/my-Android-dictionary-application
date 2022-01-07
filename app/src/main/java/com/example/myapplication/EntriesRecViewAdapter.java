@@ -49,20 +49,22 @@ public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAd
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.entry_card_view, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
+//        System.out.println("position at onCreate: " + viewHolder.getBindingAdapterPosition());
         viewHolder.txtEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                System.out.println("position at onClick " + viewHolder.getBindingAdapterPosition());
                 EntryInformationModel entryInformationModel;
                 //the ID one inputs here doesn't matter as it is never accessed later
-                if (!databaseHelper.checkIfRecordExists(entries.get(viewHolder.getAdapterPosition()).getEntry())) {
-                    entryInformationModel = new EntryInformationModel(-1, entries.get(viewHolder.getAdapterPosition()).getEntry(), 1, true);
+                if (!databaseHelper.checkIfRecordExists(entries.get(viewHolder.getBindingAdapterPosition()).getEntry())) {
+                    entryInformationModel = new EntryInformationModel(-1, entries.get(viewHolder.getBindingAdapterPosition()).getEntry(), 1, true);
                     boolean success = databaseHelper.addOne(entryInformationModel);
                     if (success) {
 //                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
-                    boolean success = databaseHelper.updateRecord(entries.get(viewHolder.getAdapterPosition()).getEntry());
+                    boolean success = databaseHelper.updateRecord(entries.get(viewHolder.getBindingAdapterPosition()).getEntry());
                     if (success) {
 //                        Toast.makeText(mContext, entries.get(position).getEntry() + " queried multiple times", Toast.LENGTH_SHORT).show();
                     }

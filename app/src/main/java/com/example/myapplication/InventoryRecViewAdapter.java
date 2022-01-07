@@ -42,11 +42,11 @@ public class InventoryRecViewAdapter extends RecyclerView.Adapter<InventoryRecVi
             @Override
             public void onClick(View v) {
                 DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                Uri uri = Uri.parse("https://mdict-heroku.herokuapp.com/download/" + entries.get(holder.getAdapterPosition()));
+                Uri uri = Uri.parse("https://mdict-heroku.herokuapp.com/download/" + entries.get(holder.getBindingAdapterPosition()));
                 DownloadManager.Request request = new DownloadManager.Request(uri);
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalFilesDir(context, null, entries.get(holder.getAdapterPosition()));
-                File file = new File(context.getExternalFilesDir(null), entries.get(holder.getAdapterPosition()));
+                request.setDestinationInExternalFilesDir(context, null, entries.get(holder.getBindingAdapterPosition()));
+                File file = new File(context.getExternalFilesDir(null), entries.get(holder.getBindingAdapterPosition()));
                 if (file.exists()) {
                     Toast.makeText(context, "the dictionary is already in local storage", Toast.LENGTH_LONG).show();
                 } else {
