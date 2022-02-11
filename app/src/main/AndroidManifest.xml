@@ -20,7 +20,8 @@
             android:label="My Dictionary" />
         <activity
             android:name=".MainActivity"
-            android:label="My Dictionary">
+            android:label="My Dictionary"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

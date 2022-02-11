@@ -123,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        alertDialog.dismiss();
+        if (alertDialog != null){
+            alertDialog.dismiss();
+        }
     }
 
     public native String entryPoint(String argument1, String argument2);
@@ -322,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
         MenuItem buttonDeleteLocalHtmls = menu.findItem(R.id.clear_local_htmls);
         MenuItem buttonDeleteLastQuery = menu.findItem(R.id.delete_last_query);
         MenuItem searchItem = menu.findItem(R.id.action_search);
+        MenuItem buttonDownloadFromServer = menu.findItem(R.id.download_from_server);
 
         searchView = (SearchView) searchItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
@@ -353,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
                 buttonDeleteHistory.setVisible(false);
                 buttonDeleteLocalHtmls.setVisible(false);
                 buttonDeleteLastQuery.setVisible(false);
+                buttonDownloadFromServer.setVisible(false);
 
                 entriesBackup = (ArrayList<Entry>) entries.clone();
 
