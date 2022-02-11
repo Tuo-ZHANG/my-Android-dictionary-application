@@ -1,6 +1,9 @@
 # my-Android-dictionary-application
 An Android dictionary application. I have used the [mdict-jni-query-library](https://github.com/Tuo-ZHANG/mdict-jni-query-library) I have written to access the dictionary of mdx format. 
 
+## Build
+Please use Android studio bumblebee. As this application uses JNI, NDK is also needed, make sure you have NDK installed in the SDK tools.
+
 ## Supporting features
 - [x] quering multiple dictionaries at the same time
 - [x] utilities for managing query histories with integration of SQLite 
