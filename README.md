@@ -15,9 +15,9 @@ Please use Android studio bumblebee. As this application uses JNI, NDK is also n
 
   ![alt text](https://github.com/Tuo-ZHANG/my-Android-dictionary-application/blob/master/c1dc866773adefd4ee841630678065f.jpg)
   
- - utilities
+- utilities
 
-    ![alt text](https://github.com/Tuo-ZHANG/my-Android-dictionary-application/blob/master/5cfe661e76c40689f7dba55d2fd7ccd.jpg)
+  ![alt text](https://github.com/Tuo-ZHANG/my-Android-dictionary-application/blob/master/5cfe661e76c40689f7dba55d2fd7ccd.jpg)
 
 - conjugation of German verbs
 
