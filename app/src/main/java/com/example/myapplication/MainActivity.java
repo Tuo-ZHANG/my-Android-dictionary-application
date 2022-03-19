@@ -135,21 +135,54 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createBackup() {
-        File databaseDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+        File myBackupDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
                 + File.separator + "my-backup");
-        if (!databaseDirectory.exists()) {
-            databaseDirectory.mkdir();
+        if (!myBackupDirectory.exists()) {
+            myBackupDirectory.mkdir();
         }
         File[] fileList = getExternalFilesDir(null).listFiles();
-        for (File file : fileList) {
+        if (fileList.length == 0) {
+            Toast.makeText(MainActivity.this, "no need to backup", Toast.LENGTH_LONG).show();
+        } else {
+            for (File file : fileList) {
             if (file.isFile()){
-                String destination = databaseDirectory.getAbsolutePath() + File.separator + file.getName();
-                try {
-                    FileUtils.copyFile(file, new File(destination));
-                } catch (IOException e) {
-                    e.printStackTrace();
+//                String destination = myBackupDirectory.getAbsolutePath() + File.separator + file.getName();
+                File destination = new File(myBackupDirectory.getAbsolutePath() + File.separator + file.getName());
+                if (!destination.exists()){
+                    try {
+                        FileUtils.copyFile(file, destination);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, file.getName() + " already backed up", Toast.LENGTH_LONG).show();
                 }
             }
+            }
+            Toast.makeText(MainActivity.this, "backup created", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void deployBackup() {
+        File externalFilesDir = getExternalFilesDir(null);
+        File myBackupDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                + File.separator + "my-backup");
+        if (!myBackupDirectory.exists()) {
+            Toast.makeText(MainActivity.this, "backup directory doesn't exist, please click create backup first", Toast.LENGTH_LONG).show();
+        } else {
+            for (File file: myBackupDirectory.listFiles()) {
+                File destination = new File(externalFilesDir.getAbsolutePath() + File.separator + file.getName());
+                if (!destination.exists()){
+                    try {
+                        FileUtils.copyFile(file, destination);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "no need to deploy" + file.getName(), Toast.LENGTH_SHORT).show();
+                }
+            }
+            Toast.makeText(MainActivity.this, "backup deployed", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -578,10 +611,24 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.create_backup) {
-            createBackup();
-            Toast.makeText(MainActivity.this, "backup created", Toast.LENGTH_LONG).show();
+            alertDialog.setButton(-1, "ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    createBackup();
+                }
+            });
+            alertDialog.show();
             return true;
-        } else {
+        } else if (id == R.id.deploy_backup) {
+            alertDialog.setButton(-1, "ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    deployBackup();
+                }
+            });
+            alertDialog.show();
+            return true;
+        }else {
             return super.onOptionsItemSelected(item);
         }
     }
