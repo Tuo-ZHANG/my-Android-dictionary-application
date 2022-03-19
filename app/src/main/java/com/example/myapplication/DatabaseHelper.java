@@ -6,8 +6,11 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 
 import androidx.annotation.Nullable;
+
+import java.io.File;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ENTRY = "ENTRY";
@@ -16,8 +19,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_HAS_RECORD = "HAS_RECORD";
     public static final String COLUMN_ID = "ID";
 
+//    public DatabaseHelper(@Nullable Context context) {
+//        super(context, "entry.db", null, 1);
+//    }
+
     public DatabaseHelper(@Nullable Context context) {
-        super(context, "entry.db", null, 1);
+        super(context, Environment.getExternalStorageDirectory()
+                + File.separator + "sqlite-databases" + File.separator + "entry.db", null, 1);
     }
 
     @Override
@@ -42,8 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long insert = db.insert(ENTRY_TABLE, null, cv);
         if (insert == -1) {
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -53,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String queryString = "SELECT " + COLUMN_QUERIED_TIMES + " FROM " + ENTRY_TABLE + " WHERE "
                 + COLUMN_ENTRY + "=?";
-        Cursor cursor= db.rawQuery(queryString, new String [] {record});
+        Cursor cursor = db.rawQuery(queryString, new String[]{record});
         if (cursor.moveToFirst()) {
             int queriedTimes = cursor.getInt(0);
             cursor.close();
@@ -68,12 +75,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String queryString = "SELECT " + COLUMN_ENTRY + " FROM " + ENTRY_TABLE + " WHERE "
                 + COLUMN_ENTRY + "=?";
-        Cursor cursor= db.rawQuery(queryString, new String [] {record});
+        Cursor cursor = db.rawQuery(queryString, new String[]{record});
         if (cursor.getCount() > 0) {
             cursor.close();
             return true;
-        }
-        else {
+        } else {
             cursor.close();
             return false;
         }
@@ -84,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String queryString = "SELECT * FROM " + ENTRY_TABLE + " WHERE "
                 + COLUMN_ENTRY + "=?";
-        Cursor cursor = db.rawQuery(queryString, new String [] {record});
+        Cursor cursor = db.rawQuery(queryString, new String[]{record});
         int updatedQueriedTimes = 0;
         if (cursor.moveToFirst()) {
             updatedQueriedTimes = cursor.getInt(2) + 1;
@@ -94,11 +100,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_ENTRY, record);
         cv.put(COLUMN_QUERIED_TIMES, updatedQueriedTimes);
         cv.put(COLUMN_HAS_RECORD, true);
-        long update = db.update(ENTRY_TABLE, cv, COLUMN_ENTRY + "=?", new String [] {record});
+        long update = db.update(ENTRY_TABLE, cv, COLUMN_ENTRY + "=?", new String[]{record});
         if (update == -1) {
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -119,7 +124,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public String getLastQuery() {
         SQLiteDatabase db = this.getReadableDatabase();
         String queryString = "SELECT " + COLUMN_ENTRY + " FROM " + ENTRY_TABLE + " WHERE id = (SELECT MAX(id) FROM " + ENTRY_TABLE + ")";
-        Cursor cursor= db.rawQuery(queryString, new String [] {});
+        Cursor cursor = db.rawQuery(queryString, new String[]{});
         if (cursor.moveToFirst()) {
             String query = cursor.getString(0);
             cursor.close();
@@ -130,7 +135,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         SQLiteDatabase database = this.getReadableDatabase();
         long numberOfRows = DatabaseUtils.queryNumEntries(database, ENTRY_TABLE);
         return numberOfRows == 0;

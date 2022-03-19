@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,8 +19,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -79,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
         setUpRecyclerView();
 //        Log.i("FieldInfo", "the types size at setUpRecyclerView " + types.size());
 
-//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXTERNAL_STORAGE_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        createDatabaseDirectory();
     }
 
     @Override
@@ -116,8 +121,35 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (alertDialog != null){
+        if (alertDialog != null) {
             alertDialog.dismiss();
+        }
+    }
+
+    public void createDatabaseDirectory() {
+        File databaseDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                + File.separator + "sqlite-databases");
+        if (!databaseDirectory.exists()) {
+            databaseDirectory.mkdir();
+        }
+    }
+
+    public void createBackup() {
+        File databaseDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                + File.separator + "my-backup");
+        if (!databaseDirectory.exists()) {
+            databaseDirectory.mkdir();
+        }
+        File[] fileList = getExternalFilesDir(null).listFiles();
+        for (File file : fileList) {
+            if (file.isFile()){
+                String destination = databaseDirectory.getAbsolutePath() + File.separator + file.getName();
+                try {
+                    FileUtils.copyFile(file, new File(destination));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -306,13 +338,13 @@ public class MainActivity extends AppCompatActivity {
         SubMenu dictInventorySubMenu = dictInventory.getSubMenu();
 //        dictInventorySubMenu.clearHeader();
         ArrayList<File> dictionaries = getDictionaries();
-        for (File dictionary:dictionaries) {
+        for (File dictionary : dictionaries) {
             dictInventorySubMenu.add(dictionary.getName().substring(0, dictionary.getName().length() - 4));
         }
-        
+
         MenuItem viewMode = menu.findItem(R.id.view_mode);
         MenuItem buttonViewByQueryFrequency = menu.findItem(R.id.by_query_frequency);
-        
+
         MenuItem buttonDeleteHistory = menu.findItem(R.id.clear_query_history);
         MenuItem buttonDeleteLocalHtmls = menu.findItem(R.id.clear_local_htmls);
         MenuItem buttonDeleteLastQuery = menu.findItem(R.id.delete_last_query);
@@ -391,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
                         if (queryReturnedValue.length() != 0) {
                             if (types.containsKey(query)) {
                                 //create string which contains all the dictionaries
-                                if (types.get(query).contains(dictionary.getName().substring(0, dictionary.getName().length() - 4))){
+                                if (types.get(query).contains(dictionary.getName().substring(0, dictionary.getName().length() - 4))) {
                                     if (!redundantBehavior) {
                                         redundantBehavior = true;
                                     }
@@ -539,14 +571,17 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.show();
             return true;
         } else if (id == R.id.by_query_frequency) {
-            Toast.makeText(MainActivity.this, "item clicked", Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this, "item clicked", Toast.LENGTH_LONG).show();
             return true;
         } else if (id == R.id.download_from_server) {
             Intent intent = new Intent(MainActivity.this, InventoryRecViewActivity.class);
             startActivity(intent);
             return true;
-        }
-        else {
+        } else if (id == R.id.create_backup) {
+            createBackup();
+            Toast.makeText(MainActivity.this, "backup created", Toast.LENGTH_LONG).show();
+            return true;
+        } else {
             return super.onOptionsItemSelected(item);
         }
     }

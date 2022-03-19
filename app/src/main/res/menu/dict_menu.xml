@@ -39,4 +39,12 @@
         android:id="@+id/delete_last_query"
         android:title="@string/delete_last_query"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/create_backup"
+        android:title="@string/create_backup"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/deploy_backup"
+        android:title="@string/deploy_backup"
+        app:showAsAction="never" />
 </menu>

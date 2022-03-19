@@ -13,4 +13,6 @@
     <string name="view_mode">view mode</string>
     <string name="by_query_frequency">by query frequency</string>
     <string name="download_from_server">download from server</string>
+    <string name="create_backup">create backup</string>
+    <string name="deploy_backup">deploy backup</string>
 </resources>
