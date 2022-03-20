@@ -6,10 +6,11 @@
 #include "mdict_extern.h"
 #include <cstdlib>
 
-std::string query(int, char**);
+std::string query(int, char **);
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_MainActivity_entryPoint(JNIEnv *env, jobject thiz, jstring input1, jstring input2) {
+Java_com_example_myapplication_MainActivity_entryPoint(JNIEnv *env, jobject thiz, jstring input1,
+                                                       jstring input2) {
     // TODO
     const int argc = 3;
     const char *placeholder = "placeholder";
@@ -32,6 +33,33 @@ Java_com_example_myapplication_MainActivity_entryPoint(JNIEnv *env, jobject thiz
 //    if (*result != nullptr) {
 //        free(*result);
 //    }
+
+    env->ReleaseStringUTFChars(input1, path);
+    env->ReleaseStringUTFChars(input2, word);
+
+    free(argv[0]);
+    free(argv[1]);
+    free(argv[2]);
+    __android_log_print(ANDROID_LOG_INFO, "length", "%zu \n", strlen(definition.c_str()));
+    return env->NewStringUTF(definition.c_str());;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_example_myapplication_ContextMenuInitiatedActivity_entryPoint(JNIEnv *env, jobject thiz,
+                                                                       jstring input1,
+                                                                       jstring input2) {
+    const int argc = 3;
+    const char *placeholder = "placeholder";
+    char *argv[argc];
+    const char *path = env->GetStringUTFChars(input1, nullptr);
+    const char *word = env->GetStringUTFChars(input2, nullptr);
+
+    argv[0] = strdup(placeholder);
+    argv[1] = strdup(path);
+    argv[2] = strdup(word);
+
+    std::string definition = query(argc, argv);
 
     env->ReleaseStringUTFChars(input1, path);
     env->ReleaseStringUTFChars(input2, word);

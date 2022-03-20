@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">My Dictionary</string>
     <string name="search">Search</string>
     <string name="entry">entry</string>
     <string name="clear_query_history">clear query history</string>

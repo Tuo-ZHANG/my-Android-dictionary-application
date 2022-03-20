@@ -145,19 +145,19 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "no need to backup", Toast.LENGTH_LONG).show();
         } else {
             for (File file : fileList) {
-            if (file.isFile()){
+                if (file.isFile()) {
 //                String destination = myBackupDirectory.getAbsolutePath() + File.separator + file.getName();
-                File destination = new File(myBackupDirectory.getAbsolutePath() + File.separator + file.getName());
-                if (!destination.exists()){
-                    try {
-                        FileUtils.copyFile(file, destination);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    File destination = new File(myBackupDirectory.getAbsolutePath() + File.separator + file.getName());
+                    if (!destination.exists()) {
+                        try {
+                            FileUtils.copyFile(file, destination);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, file.getName() + " already backed up", Toast.LENGTH_LONG).show();
                     }
-                } else {
-                    Toast.makeText(MainActivity.this, file.getName() + " already backed up", Toast.LENGTH_LONG).show();
                 }
-            }
             }
             Toast.makeText(MainActivity.this, "backup created", Toast.LENGTH_LONG).show();
         }
@@ -170,9 +170,9 @@ public class MainActivity extends AppCompatActivity {
         if (!myBackupDirectory.exists()) {
             Toast.makeText(MainActivity.this, "backup directory doesn't exist, please click create backup first", Toast.LENGTH_LONG).show();
         } else {
-            for (File file: myBackupDirectory.listFiles()) {
+            for (File file : myBackupDirectory.listFiles()) {
                 File destination = new File(externalFilesDir.getAbsolutePath() + File.separator + file.getName());
-                if (!destination.exists()){
+                if (!destination.exists()) {
                     try {
                         FileUtils.copyFile(file, destination);
                     } catch (IOException e) {
@@ -628,7 +628,7 @@ public class MainActivity extends AppCompatActivity {
             });
             alertDialog.show();
             return true;
-        }else {
+        } else {
             return super.onOptionsItemSelected(item);
         }
     }

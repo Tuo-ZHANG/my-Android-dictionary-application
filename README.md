@@ -8,6 +8,7 @@ Please use Android studio bumblebee. As this application uses JNI, NDK is also n
 - [x] quering multiple dictionaries at the same time
 - [x] utilities for managing query histories with integration of SQLite 
 - [x] download dictionary sources from the FastAPI backend
+- [x] search through context menu
 - [ ] view query history in order of alphabet, query frequencies or time 
 
 ## Showcase
