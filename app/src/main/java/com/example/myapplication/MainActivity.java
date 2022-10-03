@@ -487,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.i("FieldInfo", String.valueOf(types.size()));
 
                     EntryInformationModel entryInformationModel;
-                    //the ID one inputs here doesn't matter as it is never accessed later
+                    //the id one inputs here doesn't matter as it is never accessed later
                     DatabaseHelper databaseHelper = new DatabaseHelper(searchView.getContext());
                     if (!databaseHelper.checkIfRecordExists(query)) {
                         // the id here does not matter as it is never accessed later
@@ -502,6 +502,7 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(searchView.getContext(), query + " already exists in the database but not in local cache", Toast.LENGTH_SHORT).show();
                         }
+                        databaseHelper.updateRecord(query);
                     }
 
                     Intent intent = new Intent(searchView.getContext(), HtmlsRecViewActivity.class);

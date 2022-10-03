@@ -34,7 +34,6 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
         val dictionaries: ArrayList<File> = getDictionaries()
 
         var searchSuccess = false
-        var redundantBehavior = false
 
         for (dictionary in dictionaries) {
             if (dictionary.exists()) {
@@ -43,13 +42,9 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
                 if (queryReturnedValue.isNotEmpty()) {
                     if (types.containsKey(query)) {
                         //create string which contains all the dictionaries
-                        if (types[query]
+                        if (!types[query]
                             !!.contains(dictionary.name.substring(0, dictionary.name.length - 4))
                         ) {
-                            if (!redundantBehavior) {
-                                redundantBehavior = true
-                            }
-                        } else {
                             types[query] =
                                 types[query].toString() + "," + dictionary.name.substring(
                                     0,
@@ -75,7 +70,7 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
 
         if (searchSuccess) {
             val entryInformationModel: EntryInformationModel
-            //the ID one inputs here doesn't matter as it is never accessed later
+            //the id one inputs here doesn't matter as it is never accessed later
             val databaseHelper = DatabaseHelper(this)
             if (!databaseHelper.checkIfRecordExists(query)) {
                 // the id here does not matter as it is never accessed later
@@ -86,18 +81,10 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
                         .show()
                 }
             } else {
-                if (redundantBehavior) {
-                    Toast.makeText(
-                        this, "you have used search even though the query is in recycler view",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "$query already exists in the database but not in local cache",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                databaseHelper.updateRecord(query)
+                val quriedTimes = databaseHelper.returnQuriedTimes(query)
+                Toast.makeText(this, "$query now queried $quriedTimes times", Toast.LENGTH_SHORT)
+                    .show()
             }
 
             val items = ArrayList<Entry>()
