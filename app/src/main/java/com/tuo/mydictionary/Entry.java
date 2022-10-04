@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.tuo.mydictionary;
 
 public class Entry {
     private String entry;

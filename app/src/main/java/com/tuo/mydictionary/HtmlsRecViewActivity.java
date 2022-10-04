@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.tuo.mydictionary;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,13 +10,12 @@ import androidx.recyclerview.widget.SnapHelper;
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 
 import java.util.ArrayList;
 
-import static com.example.myapplication.MainActivity.DICTIONARIES;
-import static com.example.myapplication.MainActivity.ENTRY;
+import static com.tuo.mydictionary.MainActivity.DICTIONARIES;
+import static com.tuo.mydictionary.MainActivity.ENTRY;
 
 public class HtmlsRecViewActivity extends AppCompatActivity {
 

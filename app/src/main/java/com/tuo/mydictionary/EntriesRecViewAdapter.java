@@ -1,8 +1,7 @@
-package com.example.myapplication;
+package com.tuo.mydictionary;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import static com.example.myapplication.MainActivity.DICTIONARIES;
-import static com.example.myapplication.MainActivity.ENTRY;
+import static com.tuo.mydictionary.MainActivity.DICTIONARIES;
+import static com.tuo.mydictionary.MainActivity.ENTRY;
 
 public class EntriesRecViewAdapter extends RecyclerView.Adapter<EntriesRecViewAdapter.ViewHolder> implements Filterable {
 

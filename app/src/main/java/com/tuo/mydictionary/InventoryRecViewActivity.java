@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.tuo.mydictionary;
 
 import android.os.Bundle;
 import android.widget.Toast;

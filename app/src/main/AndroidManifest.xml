@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.myapplication">
+    package="com.tuo.mydictionary">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -14,26 +14,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
-            android:name=".ContextMenuInitiatedActivity"
+            android:name="com.tuo.mydictionary.ContextMenuInitiatedActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
+
                 <data android:mimeType="text/plain" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".HtmlsRecViewActivity"
+            android:name="com.tuo.mydictionary.HtmlsRecViewActivity"
             android:label="My Dictionary" />
         <activity
-            android:name=".InventoryRecViewActivity"
+            android:name="com.tuo.mydictionary.InventoryRecViewActivity"
             android:label="My Dictionary" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.tuo.mydictionary.MainActivity"
             android:exported="true"
             android:label="My Dictionary">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -1,7 +1,6 @@
-package com.example.myapplication;
+package com.tuo.mydictionary;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;

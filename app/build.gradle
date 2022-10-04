@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.3"
     ndkPath "D:\\Sdk\\ndk\\24.0.8215888"
     defaultConfig {
-        applicationId "com.example.myapplication"
+        applicationId "com.tuo.mydictionary"
         minSdkVersion 26
         targetSdkVersion 31
         versionCode 1

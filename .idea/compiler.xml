@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
       <module name="My_Application.app" target="11" />
+      <module name="My_Dictionary.app" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

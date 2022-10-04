@@ -9,7 +9,7 @@
 std::string query(int, char **);
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_MainActivity_entryPoint(JNIEnv *env, jobject thiz, jstring input1,
+Java_com_tuo_mydictionary_MainActivity_entryPoint(JNIEnv *env, jobject thiz, jstring input1,
                                                        jstring input2) {
     // TODO
     const int argc = 3;
@@ -46,7 +46,7 @@ Java_com_example_myapplication_MainActivity_entryPoint(JNIEnv *env, jobject thiz
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_ContextMenuInitiatedActivity_entryPoint(JNIEnv *env, jobject thiz,
+Java_com_tuo_mydictionary_ContextMenuInitiatedActivity_entryPoint(JNIEnv *env, jobject thiz,
                                                                        jstring input1,
                                                                        jstring input2) {
     const int argc = 3;
