@@ -13,25 +13,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
+<!--        <activity-->
+<!--            android:name=".ContextMenuInitiatedActivityUpdated"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/TransparentTheme">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.PROCESS_TEXT" />-->
+<!--                <data android:mimeType="text/plain" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
         <activity
-            android:name="com.tuo.mydictionary.ContextMenuInitiatedActivity"
-            android:exported="true">
+            android:name=".ContextMenuInitiatedActivity"
+            android:exported="true"
+            android:theme="@style/TransparentTheme">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
-
                 <data android:mimeType="text/plain" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.tuo.mydictionary.HtmlsRecViewActivity"
+            android:name=".HtmlsRecViewActivity"
             android:label="My Dictionary" />
         <activity
-            android:name="com.tuo.mydictionary.InventoryRecViewActivity"
+            android:name=".InventoryRecViewActivity"
             android:label="My Dictionary" />
         <activity
-            android:name="com.tuo.mydictionary.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="My Dictionary">
             <intent-filter>

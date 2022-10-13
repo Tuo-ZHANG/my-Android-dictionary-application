@@ -1,8 +1,10 @@
 package com.tuo.mydictionary
 
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import android.os.Environment
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +27,6 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_htmls_rec_view)
-
         val htmlsRecView = findViewById<RecyclerView>(R.id.htmls_rec_view)
         val adapterLocal = HtmlsRecViewAdapter(this)
 
@@ -116,6 +117,11 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
                 ).show()
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, (Resources.getSystem().getDisplayMetrics().heightPixels * 0.5).toInt())
     }
 
     private fun getDictionaries(): ArrayList<File> {
