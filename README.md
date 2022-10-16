@@ -9,6 +9,7 @@ Please use Android studio bumblebee. As this application uses JNI, NDK is also n
 - [x] utilities for managing query histories with integration of SQLite 
 - [x] download dictionary sources from the FastAPI backend
 - [x] search through context menu
+- [x] context menu search leads to Mdict app if installed, otherwise it leads to this app (query history is preserved all the same)
 - [ ] view query history in order of alphabet, query frequencies or time 
 
 ## Showcase
