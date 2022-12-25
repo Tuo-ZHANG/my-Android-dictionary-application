@@ -1,10 +1,14 @@
 package com.tuo.mydictionary
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
+import com.tuo.mydictionary.DictionaryService.InventoryResponseListener
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -28,10 +33,30 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val dictionaryService = DictionaryService(this)
 
+        val token = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: ""
 
-        val query = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: ""
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
+        if (networkCapabilities != null && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+            dictionaryService.getLemma(token, object : DictionaryService.LemmatizerResponseListener {
+                override fun onResponse(lemma: String) {
+//                Log.d("lemma", lemma)
+                    queryDictionaries(lemma.substring(1, lemma.length - 1))
+                }
+                override fun onError(message: String) {
+                    Toast.makeText(this@ContextMenuInitiatedActivity, message, Toast.LENGTH_SHORT).show()
+                    queryDictionaries(token)
+                }
+            } )
+        } else {
+            queryDictionaries(token)
+        }
+    }
 
+    private fun queryDictionaries(token: String) {
         val dictionaries: ArrayList<File> = getDictionaries()
 
         var searchSuccess = false
@@ -39,23 +64,23 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
         for (dictionary in dictionaries) {
             if (dictionary.exists()) {
                 // Example of a call to a native method
-                val queryReturnedValue: String = entryPoint(dictionary.absolutePath, query)
+                val queryReturnedValue: String = entryPoint(dictionary.absolutePath, token)
                 if (queryReturnedValue.isNotEmpty()) {
-                    if (types.containsKey(query)) {
+                    if (types.containsKey(token)) {
                         //create string which contains all the dictionaries
-                        if (!types[query]
+                        if (!types[token]
                             !!.contains(dictionary.name.substring(0, dictionary.name.length - 4))
                         ) {
-                            types[query] =
-                                types[query].toString() + "," + dictionary.name.substring(
+                            types[token] =
+                                types[token].toString() + "," + dictionary.name.substring(
                                     0,
                                     dictionary.name.length - 4
                                 )
                         }
                     } else {
-                        types[query] = dictionary.name.substring(0, dictionary.name.length - 4)
+                        types[token] = dictionary.name.substring(0, dictionary.name.length - 4)
                     }
-                    writeFile(dictionary.name, query, queryReturnedValue)
+                    writeFile(dictionary.name, token, queryReturnedValue)
                     if (!searchSuccess) {
                         searchSuccess = true
                     }
@@ -70,12 +95,12 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
         }
 
         if (searchSuccess) {
-            updateDatabase(query)
-            if (isPackageInstalled(packageToCheck, packageManager)){
+            updateDatabase(token)
+            if (isPackageInstalled(packageToCheck, packageManager)) {
                 val query = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: ""
                 val sendIntent = Intent()
                 sendIntent.action = Intent.ACTION_SEND
-                sendIntent.putExtra(Intent.EXTRA_TEXT, query)
+                sendIntent.putExtra(Intent.EXTRA_TEXT, token)
                 sendIntent.type = "text/plain"
                 sendIntent.setClassName(packageToCheck, "$packageToCheck.PopupForm")
                 val shareIntent = Intent.createChooser(sendIntent, null)
@@ -88,10 +113,10 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
                 val adapterLocal = HtmlsRecViewAdapter(this)
 
                 val items = ArrayList<Entry>()
-                val listOfDictionaries = types[query]!!.split(",")
+                val listOfDictionaries = types[token]!!.split(",")
 
                 for (s in listOfDictionaries) {
-                    items.add(Entry(query, s))
+                    items.add(Entry(token, s))
                 }
 
                 adapterLocal.setItems(items)

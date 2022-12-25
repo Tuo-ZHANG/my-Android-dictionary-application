@@ -6,6 +6,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,7 +14,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 public class DictionaryService {
-    public static final String QUERY = "https://ng4vbj.deta.dev/query?search=";
+    public static final String QUERY = "http://35.158.109.10/lemmatize/";
     Context context;
 
     public DictionaryService(Context context) {
@@ -28,6 +29,29 @@ public class DictionaryService {
     public interface InventoryResponseListener {
         void onError(String message);
         void onResponse(ArrayList<String> inventory);
+    }
+
+    public interface LemmatizerResponseListener {
+        void onError(String message);
+        void onResponse(String lemma);
+    }
+
+    public void getLemma (String token, LemmatizerResponseListener lemmatizerResponseListener) {
+        String url = QUERY + token;
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        lemmatizerResponseListener.onResponse(response);
+                    }
+                    },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        lemmatizerResponseListener.onError("That didn't work!");
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(request);
     }
 
     public void getContent(String search, QueryResponseListener queryResponseListener) {
