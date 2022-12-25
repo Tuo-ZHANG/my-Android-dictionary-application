@@ -10,6 +10,7 @@ Please use Android studio bumblebee. As this application uses JNI, NDK is also n
 - [x] download dictionary sources from the FastAPI backend
 - [x] search through context menu
 - [x] context menu search leads to Mdict app if installed, otherwise it leads to this app (query history is preserved all the same)
+- [x] context menu search now would lemmatize the German word through FastAPI backend before feeding the input to the dictionary
 - [ ] view query history in order of alphabet, query frequencies or time 
 
 ## Showcase
