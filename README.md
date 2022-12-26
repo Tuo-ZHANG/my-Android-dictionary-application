@@ -10,7 +10,8 @@ Please use Android studio bumblebee. As this application uses JNI, NDK is also n
 - [x] download dictionary sources from the FastAPI backend
 - [x] search through context menu
 - [x] context menu search leads to Mdict app if installed, otherwise it leads to this app (query history is preserved all the same)
-- [x] context menu search now would lemmatize the German word through FastAPI backend before feeding the input to the dictionary
+- [x] In context menu search, if the original token can not be found in any dictionaries, it would be lemmatized through FastAPI backend (currently supports German processing) before being fed into to the dictionary
+- [x] In context menu search, if the input is text, the app would combine the first and last token of the text to form a new token, this is specifically for processing the Trennbare Verben in German
 - [ ] view query history in order of alphabet, query frequencies or time 
 
 ## Showcase
