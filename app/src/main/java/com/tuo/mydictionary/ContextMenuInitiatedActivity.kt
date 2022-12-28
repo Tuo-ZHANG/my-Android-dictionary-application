@@ -7,6 +7,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,7 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
         var input = (intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: "").trim()
         if (input.split(" ").size == 1) {
             val token = input
+//            Log.d("lemma", token)
             if (searchSuccess(token)) {
                 updateDatabase(token)
                 actionAfterSearchSuccess(token)
@@ -43,7 +45,12 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
         } else {
             val tokenList = input.split(" ")
             val token = tokenList[tokenList.lastIndex] + tokenList[0]
-            searchByLemmatizer(token)
+            if (searchSuccess(token)) {
+                updateDatabase(token)
+                actionAfterSearchSuccess(token)
+            } else {
+                searchByLemmatizer(token)
+            }
         }
     }
 
@@ -96,7 +103,7 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
                 token,
                 object : DictionaryService.LemmatizerResponseListener {
                     override fun onResponse(lemma: String) {
-    //                Log.d("lemma", lemma)
+//                        Log.d("lemma", lemma)
                         queryDictionaries(lemma.substring(1, lemma.length - 1))
                     }
 
