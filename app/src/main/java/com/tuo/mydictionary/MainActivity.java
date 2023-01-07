@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -216,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void writeFile(String dict, String word, String definition) {
+//        Log.d("debug", word);
         if (isExternalStorageWritable()) {
             File dictDirectory = new File(getExternalFilesDir(null).getAbsolutePath() + "/" + dict.substring(0, dict.length() - 4));
             if (!dictDirectory.exists()) {
@@ -239,6 +242,8 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            } else {
+//                Log.d("debug", htmlPage.getName() + " exists");
             }
         } else {
             Toast.makeText(this, "cannot write to external storage", Toast.LENGTH_LONG).show();
@@ -437,6 +442,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                query = query.toLowerCase(Locale.ROOT);
 //                Log.i("MethodInfo", "onQueryTextSubmit called");
 
 //                Toast.makeText(getApplicationContext(), "search " + query + " in the dictionaries", Toast.LENGTH_LONG).show();
@@ -454,6 +460,7 @@ public class MainActivity extends AppCompatActivity {
 //                      webView.loadData(queryReturnedValue, "text/html", null);
 //                        Log.i("length", String.valueOf(queryReturnedValue.length()));
                         if (queryReturnedValue.length() != 0) {
+//                            Log.d("debug", "enter queryReturnedValue.length() != 0");
                             if (types.containsKey(query)) {
                                 //create string which contains all the dictionaries
                                 if (types.get(query).contains(dictionary.getName().substring(0, dictionary.getName().length() - 4))) {
@@ -466,6 +473,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 types.put(query, dictionary.getName().substring(0, dictionary.getName().length() - 4));
                             }
+//                            Log.d("debug", query);
                             writeFile(dictionary.getName(), query, queryReturnedValue);
                             if (!searchSuccess) {
                                 searchSuccess = true;
@@ -575,6 +583,7 @@ public class MainActivity extends AppCompatActivity {
             DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
             if (!databaseHelper.isEmpty()) {
                 String query = databaseHelper.getLastQuery();
+
                 alertDialog.setMessage("are you sure to delete the query for " + query + "?");
                 alertDialog.setButton(-1, "ok", new DialogInterface.OnClickListener() {
                     @Override
@@ -600,9 +609,10 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
+                alertDialog.show();
+            } else {
+                Toast.makeText(this, "the query table is empty", Toast.LENGTH_SHORT).show();
             }
-
-            alertDialog.show();
             return true;
         } else if (id == R.id.by_query_frequency) {
 //            Toast.makeText(MainActivity.this, "item clicked", Toast.LENGTH_LONG).show();

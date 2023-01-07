@@ -11,6 +11,7 @@ import android.os.Environment;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ENTRY = "ENTRY";
@@ -44,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean addOne(EntryInformationModel entryInformationModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_ENTRY, entryInformationModel.getEntry());
+        cv.put(COLUMN_ENTRY, entryInformationModel.getEntry().toLowerCase(Locale.ROOT));
         cv.put(COLUMN_QUERIED_TIMES, entryInformationModel.getQueriedTimes());
         cv.put(COLUMN_HAS_RECORD, entryInformationModel.isHasRecord());
         long insert = db.insert(ENTRY_TABLE, null, cv);
@@ -56,6 +57,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public int returnQuriedTimes(String record) {
+        record = record.toLowerCase(Locale.ROOT);
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         String queryString = "SELECT " + COLUMN_QUERIED_TIMES + " FROM " + ENTRY_TABLE + " WHERE "
@@ -72,6 +75,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean checkIfRecordExists(String record) {
+        record = record.toLowerCase(Locale.ROOT);
+
         SQLiteDatabase db = this.getReadableDatabase();
         String queryString = "SELECT " + COLUMN_ENTRY + " FROM " + ENTRY_TABLE + " WHERE "
                 + COLUMN_ENTRY + "=?";
@@ -86,6 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean updateRecord(String record) {
+        record = record.toLowerCase(Locale.ROOT);
 
         SQLiteDatabase db = this.getWritableDatabase();
         String queryString = "SELECT * FROM " + ENTRY_TABLE + " WHERE "

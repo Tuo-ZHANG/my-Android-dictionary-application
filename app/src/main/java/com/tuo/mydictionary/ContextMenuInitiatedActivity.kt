@@ -33,6 +33,7 @@ class ContextMenuInitiatedActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         var input = (intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: "").trim()
+            .lowercase(Locale.ROOT)
         if (input.split(" ").size == 1) {
             val token = input
 //            Log.d("lemma", token)
